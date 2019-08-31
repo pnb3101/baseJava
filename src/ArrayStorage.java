@@ -6,64 +6,63 @@ import java.util.Iterator;
  */
 public class ArrayStorage {
         Resume[] storage = new Resume[10000];
-        private ArrayList<Resume> resumes = new ArrayList();
-
-        public ArrayStorage() {
-        }
 
         void clear() {
-            this.resumes.removeAll(this.resumes);
+            for(int i=0; i<storage.length; i++) {
+                storage[i] = null;
+            }
         }
 
         void save(Resume r) {
-            this.resumes.add(r);
+            int size = size();
+            storage[size] = r;
         }
 
         Resume get(String uuid) {
-            Iterator var2 = this.resumes.iterator();
+          Resume result = null;
+          try {
+              for (int i = 0; i < storage.length; i++) {
+                  if (storage[i].uuid.equals(uuid))
+                      result = storage[i];
+              }
+          }catch (NullPointerException e){
 
-            Resume r;
-            do {
-                if (!var2.hasNext()) {
-                    return null;
-                }
-
-                r = (Resume)var2.next();
-            } while(!r.uuid.equals(uuid));
-
-            return r;
+          }
+          return result;
         }
 
         void delete(String uuid) {
-            for(int i = 0; i < this.resumes.size(); ++i) {
-                if (((Resume)this.resumes.get(i)).uuid.equals(uuid)) {
-                    this.resumes.remove(i);
-                }
-            }
+          try {
+             for (int i = 0; i < storage.length; i++) {
+                 if (storage[i].uuid.equals(uuid))
+                     storage[i] = null;
+                    for(int j=i; j<storage.length-1; j++){
+                        storage[j]=storage[j+1];
+                    }
+                 storage[storage.length-1]=null;
+                 break;
+             }
+         }catch(NullPointerException e){
+
+        }
 
         }
 
         Resume[] getAll() {
-            ArrayList arr = new ArrayList();
-
-            try {
-                Iterator var2 = this.resumes.iterator();
-
-                while(var2.hasNext()) {
-                    Resume r = (Resume)var2.next();
-                    arr.add(r);
-                }
-            } catch (NullPointerException var4) {
-                System.out.println("No resume in storage");
-            }
-
-            Resume[] result = new Resume[0];
-            result = (Resume[])arr.toArray(new Resume[10000]);
-            return result;
+          return storage;
         }
 
         int size() {
-            return this.resumes.size();
+            int sizestorage=0;
+            try {
+                for (int i = 0; i < storage.length; i++) {
+                    if (!storage[i].equals(null))
+                        sizestorage++;
+                }
+            }catch(NullPointerException e){
+
+            }
+            return sizestorage;
         }
     }
 
