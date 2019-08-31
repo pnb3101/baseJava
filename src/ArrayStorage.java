@@ -42,10 +42,7 @@ public class ArrayStorage {
                  storage[storage.length-1]=null;
                  break;
              }
-         }catch(NullPointerException e){
-
-        }
-
+         }catch(NullPointerException e){    }
         }
 
         Resume[] getAll() {
@@ -59,9 +56,7 @@ public class ArrayStorage {
                     if (!storage[i].equals(null))
                         sizestorage++;
                 }
-            }catch(NullPointerException e){
-
-            }
+            }catch(NullPointerException e){     }
             return sizestorage;
         }
     }
