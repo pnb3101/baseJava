@@ -1,58 +1,82 @@
-import java.util.ArrayList;
-import java.util.Iterator;
+import static java.util.Arrays.copyOf;
+import static java.util.Arrays.fill;
 
 /**
  * Initial resume class
  */
 public class ArrayStorage {
-    Resume[] storage = new Resume[5];
+    Resume[] storage = new Resume[10000];
     int size = 0;
+    int checkedresume = -1;
+
+    void update(Resume resume) {
+        if (!exsistResume(resume.uuid)) {
+            System.out.println("There is no resume for update.");
+        } else {
+            storage[checkedresume] = resume;
+            System.out.println("Successful update.");
+        }
+    }
 
     void clear() {
-        for (int i = 0; i < size; i++) {
-            storage[i] = null;
-        }
+        fill(storage, 0, size, null);
         size = 0;
     }
 
     void save(Resume r) {
-        storage[size] = r;
-        size++;
+        if (storage.length == size) {
+            System.out.println("Sorry. Storage is full.");
+        } else if (!exsistResume(r.uuid)) {
+            storage[size] = r;
+            size++;
+        } else {
+            System.out.println("Resume already exsist.");
+        }
+
     }
 
     Resume get(String uuid) {
         Resume result = null;
-        for (int i = 0; i < size; i++) {
-            if (storage[i].uuid.equals(uuid))
-                result = storage[i];
+        if (exsistResume(uuid)) {
+            result = storage[checkedresume];
+            return result;
+        } else {
+            System.out.println("There is no resume to get.");
+            return null;
         }
-        return result;
     }
 
     void delete(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].uuid.equals(uuid)) {
-                storage[i] = null;
-                for (int j = i; j < size - 1; j++) {
-                    storage[j] = storage[j + 1];
-                }
-                storage[size - 1] = null;
-                size--;
-                break;
+        if (exsistResume(uuid)) {
+            storage[checkedresume] = null;
+            for (int j = checkedresume; j < size - 1; j++) {
+                storage[j] = storage[j + 1];
             }
+            storage[size - 1] = null;
+            size--;
+        } else {
+            System.out.println("There is no resume for delete.");
         }
     }
 
     Resume[] getAll() {
-        Resume[] listResume = new Resume[size];
-        for (int i = 0; i < size; i++) {
-            listResume[i] = storage[i];
-        }
+        Resume[] listResume = copyOf(storage, size);
         return listResume;
     }
 
     int size() {
         return size;
+    }
+
+    boolean exsistResume(String uuid) {
+        boolean exist = false;
+        for (int i = 0; i < size; i++) {
+            if (storage[i].uuid.equals(uuid)) {
+                exist = true;
+                checkedresume = i;
+            }
+        }
+        return exist;
     }
 }
 
