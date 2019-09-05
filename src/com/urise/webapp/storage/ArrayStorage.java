@@ -10,13 +10,13 @@ import java.util.Arrays;
 public class ArrayStorage {
     private Resume[] storage = new Resume[10_000];
     private int size = 0;
-    private int numInStorage = -1;
+    private int index = -1;
 
     public void update(Resume resume) {
-        if (!isExsist(resume.getUuid())) {
+        if (!isExist(resume.getUuid())) {
             System.out.println("There is no resume for update.");
         } else {
-            storage[numInStorage] = resume;
+            storage[index] = resume;
             System.out.println("\nSuccessful update.");
         }
     }
@@ -29,7 +29,7 @@ public class ArrayStorage {
     public void save(Resume resume) {
         if (storage.length == size) {
             System.out.println("Sorry. Storage is full.");
-        } else if (!isExsist(resume.getUuid())) {
+        } else if (!isExist(resume.getUuid())) {
             storage[size] = resume;
             size++;
         } else {
@@ -39,18 +39,16 @@ public class ArrayStorage {
     }
 
     public Resume get(String uuid) {
-        if (isExsist(uuid)) {
-            return storage[numInStorage];
+        if (isExist(uuid)) {
+            return storage[index];
         }
         System.out.println("There is no resume to get.");
         return null;
     }
 
     public void delete(String uuid) {
-        if (isExsist(uuid)) {
-            for (int j = numInStorage; j < size - 1; j++) {
-                storage[j] = storage[j + 1];
-            }
+        if (isExist(uuid)) {
+            if (size - 1 - index >= 0) System.arraycopy(storage, index + 1, storage, index, size - 1 - index);
             storage[size - 1] = null;
             size--;
         } else {
@@ -66,10 +64,10 @@ public class ArrayStorage {
         return size;
     }
 
-    private boolean isExsist(String uuid) {
+    private boolean isExist(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
-                numInStorage = i;
+                index = i;
                 return true;
             }
         }
