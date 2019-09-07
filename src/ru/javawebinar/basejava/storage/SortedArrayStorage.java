@@ -4,7 +4,7 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Arrays;
 
-public class SortedArrayStorage extends AbstractArrayStorage{
+public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
     public void save(Resume resume) {
@@ -14,7 +14,7 @@ public class SortedArrayStorage extends AbstractArrayStorage{
             System.out.println("Storage overflow");
         } else {
             int index = -getIndex(resume.getUuid()) - 1;
-            System.arraycopy(storage, index, storage, index + 1, size - index-1);
+            System.arraycopy(storage, index, storage, index + 1, size - index - 1);
             storage[index] = resume;
             size++;
         }
@@ -22,9 +22,9 @@ public class SortedArrayStorage extends AbstractArrayStorage{
 
     @Override
     public void delete(String uuid) {
-        if(size>=1){
+        if (size >= 1) {
             int index = getIndex(uuid);
-            System.arraycopy(storage, index+1, storage, index, size-index-1);
+            System.arraycopy(storage, index + 1, storage, index, size - index - 1);
             size--;
         }
     }
