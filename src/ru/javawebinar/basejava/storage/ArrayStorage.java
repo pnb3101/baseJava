@@ -7,8 +7,9 @@ import java.util.Arrays;
 /**
  * Initial resume class
  */
-public class ArrayStorage extends AbstractArrayStorage{
+public class ArrayStorage extends AbstractArrayStorage {
 
+    @Override
     public void save(Resume resume) {
         if (getIndex(resume.getUuid()) != -1) {
             System.out.println("Resume " + resume.getUuid() + " already exist");
@@ -20,6 +21,7 @@ public class ArrayStorage extends AbstractArrayStorage{
         }
     }
 
+    @Override
     public void delete(String uuid) {
         int index = getIndex(uuid);
         if (index == -1) {
@@ -33,8 +35,8 @@ public class ArrayStorage extends AbstractArrayStorage{
 
     @Override
     public int getIndex(String uuid) {//protected must be
-        for(int i=0; i<size; i++){
-            if(uuid.equals(storage[i].getUuid())) {
+        for (int i = 0; i < size; i++) {
+            if (uuid.equals(storage[i].getUuid())) {
                 return i;
             }
         }
