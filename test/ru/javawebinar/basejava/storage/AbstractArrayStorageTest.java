@@ -74,13 +74,13 @@ public abstract class AbstractArrayStorageTest {
         Arrays.sort(resumes);
         Resume[] resumesAfterGet = storage.getAll();
         Arrays.sort(resumesAfterGet);
-        Assert.assertTrue(Arrays.equals(resumes, resumesAfterGet));
+        Assert.assertArrayEquals(resumes, resumesAfterGet);
     }
 
     @Test
     public void save() {
         storage.save(resume);
-        Assert.assertEquals(4, storage.size());
+        Assert.assertEquals(storage.get(resume.getUuid()), resume);
     }
 
     @Test(expected = ExistStorageException.class)
