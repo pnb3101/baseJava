@@ -7,7 +7,7 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Arrays;
 
-public class AbstractStorage implements Storage {
+public abstract class AbstractStorage implements Storage {
     protected Resume[] storage = new Resume[]{};
 
     @Override
@@ -44,4 +44,6 @@ public class AbstractStorage implements Storage {
     public int size() {
         return 0;
     }
+
+    protected abstract int getIndex(String uuid);
 }

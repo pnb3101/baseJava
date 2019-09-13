@@ -6,6 +6,7 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class ListStorage extends AbstractStorage {
@@ -13,10 +14,11 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     public void update(Resume resume) {
-        if (!storageList.contains(resume)) {
+        int index = getIndex(resume.getUuid());
+        if (index < 0) {
             throw new NotExistStorageException(resume.getUuid());
         } else {
-            storageList.add(storageList.indexOf(resume), resume);
+            storageList.add(index, resume);
         }
     }
 
@@ -27,7 +29,8 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     public void save(Resume resume) {
-        if (storageList.contains(resume)) {
+        int index = getIndex(resume.getUuid());
+        if (index > 0) {
             throw new ExistStorageException(resume.getUuid());
         } else {
             storageList.add(resume);
@@ -36,21 +39,21 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     public Resume get(String uuid) {
-        Resume resume = new Resume(uuid);
-        if (!storageList.contains(resume)) {
+        int index = getIndex(uuid);
+        if (index < 0) {
             throw new NotExistStorageException(uuid);
         } else {
-            return storageList.get(storageList.indexOf(resume));
+            return storageList.get(index);
         }
     }
 
     @Override
     public void delete(String uuid) {
-        Resume resume = new Resume(uuid);
-        if (!storageList.contains(resume)) {
-            throw new NotExistStorageException(resume.getUuid());
+        int index = getIndex(uuid);
+        if (index < 0) {
+            throw new NotExistStorageException(uuid);
         } else {
-            storageList.remove(resume);
+            storageList.remove(index);
         }
     }
 
@@ -63,4 +66,17 @@ public class ListStorage extends AbstractStorage {
     public int size() {
         return storageList.size();
     }
+
+    @Override
+    protected int getIndex(String uuid) {
+        Iterator<Resume> iterator = storageList.iterator();
+        while (iterator.hasNext()) {
+            Resume r = iterator.next();
+            if (r.getUuid().equals(uuid)) {
+                return storageList.indexOf(r);
+            }
+        }
+        return -1;
+    }
 }
+
