@@ -8,7 +8,6 @@ import ru.javawebinar.basejava.model.Resume;
 import java.util.Arrays;
 
 public abstract class AbstractStorage implements Storage {
-    protected Resume[] storage = new Resume[]{};
 
     @Override
     public void update(Resume resume) {
@@ -16,7 +15,7 @@ public abstract class AbstractStorage implements Storage {
         if (index < 0) {
             throw new NotExistStorageException(resume.getUuid());
         } else {
-            updateStorage(resume);
+            updateStorage(resume, index);
         }
     }
 
@@ -26,7 +25,7 @@ public abstract class AbstractStorage implements Storage {
         if (index > 0) {
             throw new ExistStorageException(resume.getUuid());
         } else {
-            saveStorage(resume);
+            saveStorage(resume, index);
         }
     }
 
@@ -36,7 +35,7 @@ public abstract class AbstractStorage implements Storage {
         if (index < 0) {
             throw new NotExistStorageException(uuid);
         } else {
-            return getStorage(uuid);
+            return getStorage(uuid, index);
         }
     }
 
@@ -46,31 +45,17 @@ public abstract class AbstractStorage implements Storage {
         if (index < 0) {
             throw new NotExistStorageException(uuid);
         } else {
-            deleteStorage(uuid);
+            deleteStorage(uuid, index);
         }
-    }
-
-    @Override
-    public void clear() {
-    }
-
-    @Override
-    public Resume[] getAll() {
-        return new Resume[0];
-    }
-
-    @Override
-    public int size() {
-        return 0;
     }
 
     protected abstract int getIndex(String uuid);
 
-    protected abstract void updateStorage(Resume resume);
+    protected abstract void updateStorage(Resume resume, int index);
 
-    protected abstract void saveStorage(Resume resume);
+    protected abstract void saveStorage(Resume resume, int index);
 
-    protected abstract Resume getStorage(String uuid);
+    protected abstract Resume getStorage(String uuid, int index);
 
-    protected abstract void deleteStorage(String uuid);
+    protected abstract void deleteStorage(String uuid, int index);
 }
