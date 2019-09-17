@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-public abstract class AbstractArrayStorageTest {
+public abstract class AbstractStorageTest {
     private Storage storage;
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
@@ -22,7 +22,7 @@ public abstract class AbstractArrayStorageTest {
     private Resume resume2 = new Resume(UUID_2);
     private Resume resume3 = new Resume(UUID_3);
 
-    public AbstractArrayStorageTest(Storage storage) {
+    public AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
 
