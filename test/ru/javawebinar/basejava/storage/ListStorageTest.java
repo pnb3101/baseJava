@@ -7,7 +7,7 @@ import ru.javawebinar.basejava.model.Resume;
 
 import static org.junit.Assert.*;
 
-public class ListStorageTest extends AbstractStorageTest{
+public class ListStorageTest extends AbstractStorageTest {
 
     public ListStorageTest() {
         super(new ListStorage());

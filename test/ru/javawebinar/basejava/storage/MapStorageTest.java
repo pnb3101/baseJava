@@ -6,7 +6,7 @@ import ru.javawebinar.basejava.model.Resume;
 
 import static org.junit.Assert.*;
 
-public class MapStorageTest extends AbstractStorageTest{
+public class MapStorageTest extends AbstractStorageTest {
 
     public MapStorageTest() {
         super(new MapStorage());
