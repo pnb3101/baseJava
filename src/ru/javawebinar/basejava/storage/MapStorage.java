@@ -11,33 +11,33 @@ public class MapStorage extends AbstractStorage {
     private Map<String, Resume> storageMap = new HashMap<>();
 
     @Override
-    protected int getIndex(String uuid) {
-        if(storageMap.containsKey(uuid)){
-            return 1;
-        }
-        return -1;
+    protected Resume getIndex(String uuid) {
+        return storageMap.get(uuid);
     }
 
     @Override
-    protected void updateStorage(Resume resume, int index) {
-        storageMap.replace(resume.getUuid(), resume);
+    protected boolean isExist(Object resume) {
+        return resume != null;
     }
 
     @Override
-    protected void saveStorage(Resume resume, int index) {
+    protected void updateStorage(Resume resume, Object index) {
         storageMap.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected Resume getStorage(int index) {
-        List<Resume> resumes = new ArrayList<>(storageMap.values());
-        return resumes.get(index);
+    protected void saveStorage(Resume resume, Object index) {
+        storageMap.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected void deleteStorage(int index) {
-        List<Resume> resumes = new ArrayList<>(storageMap.values());
-        resumes.remove(index);
+    protected Resume getStorage(Object index) {
+        return (Resume) index;
+    }
+
+    @Override
+    protected void deleteStorage(Object index) {
+        storageMap.remove(((Resume) index).getUuid());
     }
 
     @Override
@@ -47,7 +47,7 @@ public class MapStorage extends AbstractStorage {
 
     @Override
     public Resume[] getAll() {
-        return storageMap.values().toArray(new Resume[storageMap.size()]);
+        return storageMap.values().toArray(new Resume[0]);
     }
 
     @Override

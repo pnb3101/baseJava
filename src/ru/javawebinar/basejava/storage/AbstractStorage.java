@@ -11,8 +11,8 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void update(Resume resume) {
-        int index = getIndex(resume.getUuid());
-        if (index < 0) {
+        Object index = getIndex(resume.getUuid());
+        if (!isExist(index)) {
             throw new NotExistStorageException(resume.getUuid());
         } else {
             updateStorage(resume, index);
@@ -21,8 +21,8 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void save(Resume resume) {
-        int index = getIndex(resume.getUuid());
-        if (index > 0) {
+        Object index = getIndex(resume.getUuid());
+        if (isExist(index)) {
             throw new ExistStorageException(resume.getUuid());
         } else {
             saveStorage(resume, index);
@@ -31,8 +31,8 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
+        Object index = getIndex(uuid);
+        if (!isExist(index)) {
             throw new NotExistStorageException(uuid);
         } else {
             return getStorage(index);
@@ -41,21 +41,23 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
+        Object index = getIndex(uuid);
+        if (!isExist(index)) {
             throw new NotExistStorageException(uuid);
         } else {
             deleteStorage(index);
         }
     }
 
-    protected abstract int getIndex(String uuid);
+    protected abstract Object getIndex(String uuid);
 
-    protected abstract void updateStorage(Resume resume, int index);
+    protected abstract boolean isExist(Object index);
 
-    protected abstract void saveStorage(Resume resume, int index);
+    protected abstract void updateStorage(Resume resume, Object index);
 
-    protected abstract Resume getStorage(int index);
+    protected abstract void saveStorage(Resume resume, Object index);
 
-    protected abstract void deleteStorage(int index);
+    protected abstract Resume getStorage(Object index);
+
+    protected abstract void deleteStorage(Object index);
 }
