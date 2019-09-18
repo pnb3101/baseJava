@@ -99,7 +99,7 @@ public abstract class AbstractStorageTest {
         storage.delete("uuid8");
     }
 
-    @Test
+    @Test(expected = StorageException.class)
     public void storageOverflow() {
         try {
             while (storage.size() < AbstractArrayStorage.STORAGE_LIMIT) {
