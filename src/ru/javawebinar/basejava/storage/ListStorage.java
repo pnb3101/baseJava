@@ -4,10 +4,7 @@ import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class ListStorage extends AbstractStorage {
 
@@ -19,8 +16,9 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume[] getAll() {
-        return storageList.toArray(new Resume[0]);
+    public List<Resume> getAllSorted() {
+        Collections.sort(storageList);
+        return storageList;
     }
 
     @Override
@@ -29,9 +27,9 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected Integer getIndex(String uuid) {
+    protected Integer getSearchKey(String searchKey) {
         for (int i = 0; i < storageList.size(); i++) {
-            if (storageList.get(i).getUuid().equals(uuid)) {
+            if (storageList.get(i).getUuid().equals(searchKey)) {
                 return i;
             }
         }

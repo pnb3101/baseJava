@@ -2,26 +2,23 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
-import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
-
-import java.util.Arrays;
 
 public abstract class AbstractStorage implements Storage {
 
     @Override
     public void update(Resume resume) {
-        Object index = getIndex(resume.getUuid());
-        if (!isExist(index)) {
+        Object searchKey = getSearchKey(resume.getUuid());
+        if (!isExist(searchKey)) {
             throw new NotExistStorageException(resume.getUuid());
         } else {
-            updateStorage(resume, index);
+            updateStorage(resume, searchKey);
         }
     }
 
     @Override
     public void save(Resume resume) {
-        Object index = getIndex(resume.getUuid());
+        Object index = getSearchKey(resume.getUuid());
         if (isExist(index)) {
             throw new ExistStorageException(resume.getUuid());
         } else {
@@ -31,7 +28,7 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        Object index = getIndex(uuid);
+        Object index = getSearchKey(uuid);
         if (!isExist(index)) {
             throw new NotExistStorageException(uuid);
         } else {
@@ -41,15 +38,15 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        Object index = getIndex(uuid);
-        if (!isExist(index)) {
+        Object searchKey = getSearchKey(uuid);
+        if (!isExist(searchKey)) {
             throw new NotExistStorageException(uuid);
         } else {
-            deleteStorage(index);
+            deleteStorage(searchKey);
         }
     }
 
-    protected abstract Object getIndex(String uuid);
+    protected abstract Object getSearchKey(String searchKey);
 
     protected abstract boolean isExist(Object index);
 
