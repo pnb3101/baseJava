@@ -18,23 +18,23 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected void updateStorage(Resume resume, Object index) {
+    protected void updateStorage(Resume resume, Object searchKey) {
         storageMap.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected void saveStorage(Resume resume, Object index) {
+    protected void saveStorage(Resume resume, Object searchKey) {
         storageMap.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected Resume getStorage(Object index) {
-        return (Resume) index;
+    protected Resume getStorage(Object searchKey) {
+        return (Resume) searchKey;
     }
 
     @Override
-    protected void deleteStorage(Object index) {
-        storageMap.remove(((Resume) index).getUuid());
+    protected void deleteStorage(Object searchKey) {
+        storageMap.remove(((Resume) searchKey).getUuid());
     }
 
     @Override

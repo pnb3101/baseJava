@@ -20,13 +20,13 @@ public class ArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected void insertResume(Resume resume, int index) {
+    protected void insertResume(Resume resume, int searchKey) {
         storage[size] = resume;
     }
 
     @Override
-    protected void fillDeletedResume(int index) {
-        storage[index] = storage[size - 1];
+    protected void fillDeletedResume(int searchKey) {
+        storage[searchKey] = storage[size - 1];
     }
 }
 
