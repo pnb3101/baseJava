@@ -18,22 +18,22 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected void updateStorage(Resume resume, Object searchKey) {
+    protected void updateInStorage(Resume resume, Object searchKey) {
         storageMap.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected void saveStorage(Resume resume, Object searchKey) {
+    protected void saveInStorage(Resume resume, Object searchKey) {
         storageMap.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected Resume getStorage(Object searchKey) {
+    protected Resume getFromStorage(Object searchKey) {
         return (Resume) searchKey;
     }
 
     @Override
-    protected void deleteStorage(Object searchKey) {
+    protected void deleteFromStorage(Object searchKey) {
         storageMap.remove(((Resume) searchKey).getUuid());
     }
 
@@ -43,10 +43,8 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> resumesList = Arrays.asList(storageMap.values().toArray(new Resume[0]));
-        Collections.sort(resumesList);
-        return resumesList;
+    protected List<Resume> getListResumes() {
+        return Arrays.asList(storageMap.values().toArray(new Resume[0]));
     }
 
     @Override

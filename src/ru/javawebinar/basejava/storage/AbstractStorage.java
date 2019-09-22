@@ -4,6 +4,9 @@ import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
+import java.util.Collections;
+import java.util.List;
+
 public abstract class AbstractStorage implements Storage {
 
     @Override
@@ -12,7 +15,7 @@ public abstract class AbstractStorage implements Storage {
         if (!isExist(searchKey)) {
             throw new NotExistStorageException(resume.getUuid());
         } else {
-            updateStorage(resume, searchKey);
+            updateInStorage(resume, searchKey);
         }
     }
 
@@ -22,7 +25,7 @@ public abstract class AbstractStorage implements Storage {
         if (isExist(searchKey)) {
             throw new ExistStorageException(resume.getUuid());
         } else {
-            saveStorage(resume, searchKey);
+            saveInStorage(resume, searchKey);
         }
     }
 
@@ -32,7 +35,7 @@ public abstract class AbstractStorage implements Storage {
         if (!isExist(searchKey)) {
             throw new NotExistStorageException(uuid);
         } else {
-            return getStorage(searchKey);
+            return getFromStorage(searchKey);
         }
     }
 
@@ -42,19 +45,28 @@ public abstract class AbstractStorage implements Storage {
         if (!isExist(searchKey)) {
             throw new NotExistStorageException(uuid);
         } else {
-            deleteStorage(searchKey);
+            deleteFromStorage(searchKey);
         }
     }
+
+    @Override
+    public List<Resume> getAllSorted(){
+        List<Resume> resumesList = getListResumes();
+        Collections.sort(resumesList);
+        return resumesList;
+    }
+
+    protected abstract List<Resume> getListResumes();
 
     protected abstract Object getSearchKey(String uuid);
 
     protected abstract boolean isExist(Object searchKey);
 
-    protected abstract void updateStorage(Resume resume, Object searchKey);
+    protected abstract void updateInStorage(Resume resume, Object searchKey);
 
-    protected abstract void saveStorage(Resume resume, Object searchKey);
+    protected abstract void saveInStorage(Resume resume, Object searchKey);
 
-    protected abstract Resume getStorage(Object searchKey);
+    protected abstract Resume getFromStorage(Object searchKey);
 
-    protected abstract void deleteStorage(Object searchKey);
+    protected abstract void deleteFromStorage(Object searchKey);
 }

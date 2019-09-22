@@ -16,8 +16,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        Collections.sort(storageList);
+    protected List<Resume> getListResumes() {
         return storageList;
     }
 
@@ -42,22 +41,22 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void updateStorage(Resume resume, Object index) {
+    protected void updateInStorage(Resume resume, Object index) {
         storageList.set((Integer) index, resume);
     }
 
     @Override
-    protected void saveStorage(Resume resume, Object index) {
+    protected void saveInStorage(Resume resume, Object index) {
         storageList.add(resume);
     }
 
     @Override
-    protected Resume getStorage(Object index) {
+    protected Resume getFromStorage(Object index) {
         return storageList.get((Integer) index);
     }
 
     @Override
-    protected void deleteStorage(Object index) {
+    protected void deleteFromStorage(Object index) {
         storageList.remove(((Integer) index).intValue());
     }
 }

@@ -18,22 +18,22 @@ public class MapUuidStorage extends AbstractStorage {
     }
 
     @Override
-    protected void updateStorage(Resume resume, Object uuid) {
+    protected void updateInStorage(Resume resume, Object uuid) {
         mapUuidStorage.put((String) uuid, resume);
     }
 
     @Override
-    protected void saveStorage(Resume resume, Object uuid) {
+    protected void saveInStorage(Resume resume, Object uuid) {
         mapUuidStorage.put((String) uuid, resume);
     }
 
     @Override
-    protected Resume getStorage(Object uuid) {
+    protected Resume getFromStorage(Object uuid) {
         return mapUuidStorage.get(uuid);
     }
 
     @Override
-    protected void deleteStorage(Object uuid) {
+    protected void deleteFromStorage(Object uuid) {
         mapUuidStorage.remove(uuid);
     }
 
@@ -43,10 +43,8 @@ public class MapUuidStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> resumesList = new ArrayList<>(mapUuidStorage.values());
-        Collections.sort(resumesList);
-        return resumesList;
+    protected List<Resume> getListResumes() {
+        return new ArrayList<>(mapUuidStorage.values());
     }
 
     @Override

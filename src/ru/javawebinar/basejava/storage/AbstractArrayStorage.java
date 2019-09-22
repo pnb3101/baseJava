@@ -23,10 +23,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> resumesList = Arrays.asList(Arrays.copyOf(storage, size));
-        Collections.sort(resumesList);
-        return resumesList;
+    public List<Resume> getListResumes() {
+        return Arrays.asList(Arrays.copyOf(storage, size));
     }
 
     @Override
@@ -35,12 +33,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void updateStorage(Resume resume, Object index) {
+    protected void updateInStorage(Resume resume, Object index) {
         storage[(Integer) index] = resume;
     }
 
     @Override
-    protected void saveStorage(Resume resume, Object index) {
+    protected void saveInStorage(Resume resume, Object index) {
         if (size >= STORAGE_LIMIT) {
             throw new StorageException("Storage is full.", resume.getUuid());
         } else {
@@ -50,12 +48,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getStorage(Object index) {
+    protected Resume getFromStorage(Object index) {
         return storage[(Integer) index];
     }
 
     @Override
-    protected void deleteStorage(Object index) {
+    protected void deleteFromStorage(Object index) {
         fillDeletedResume((Integer) index);
         storage[size - 1] = null;
         size--;
