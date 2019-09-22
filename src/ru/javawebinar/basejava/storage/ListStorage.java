@@ -27,9 +27,9 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected Integer getSearchKey(String searchKey) {
+    protected Integer getSearchKey(String uuid) {
         for (int i = 0; i < storageList.size(); i++) {
-            if (storageList.get(i).getUuid().equals(searchKey)) {
+            if (storageList.get(i).getUuid().equals(uuid)) {
                 return i;
             }
         }
@@ -37,28 +37,28 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean isExist(Object searchKey) {
-        return (Integer) searchKey >= 0;
+    protected boolean isExist(Object index) {
+        return (Integer) index >= 0;
     }
 
     @Override
-    protected void updateStorage(Resume resume, Object searchKey) {
-        storageList.set((Integer) searchKey, resume);
+    protected void updateStorage(Resume resume, Object index) {
+        storageList.set((Integer) index, resume);
     }
 
     @Override
-    protected void saveStorage(Resume resume, Object searchKey) {
+    protected void saveStorage(Resume resume, Object index) {
         storageList.add(resume);
     }
 
     @Override
-    protected Resume getStorage(Object searchKey) {
-        return storageList.get((Integer) searchKey);
+    protected Resume getStorage(Object index) {
+        return storageList.get((Integer) index);
     }
 
     @Override
-    protected void deleteStorage(Object searchKey) {
-        storageList.remove(((Integer) searchKey).intValue());
+    protected void deleteStorage(Object index) {
+        storageList.remove(((Integer) index).intValue());
     }
 }
 

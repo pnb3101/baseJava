@@ -10,9 +10,9 @@ import java.util.Arrays;
 public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
-    protected Integer getSearchKey(String searchKey) {
+    protected Integer getSearchKey(String uuid) {
         for (int i = 0; i < size; i++) {
-            if (searchKey.equals(storage[i].getUuid())) {
+            if (uuid.equals(storage[i].getUuid())) {
                 return i;
             }
         }
@@ -20,13 +20,13 @@ public class ArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected void insertResume(Resume resume, int searchKey) {
+    protected void insertResume(Resume resume, int index) {
         storage[size] = resume;
     }
 
     @Override
-    protected void fillDeletedResume(int searchKey) {
-        storage[searchKey] = storage[size - 1];
+    protected void fillDeletedResume(int index) {
+        storage[index] = storage[size - 1];
     }
 }
 

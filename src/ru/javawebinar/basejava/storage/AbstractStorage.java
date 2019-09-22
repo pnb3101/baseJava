@@ -46,7 +46,7 @@ public abstract class AbstractStorage implements Storage {
         }
     }
 
-    protected abstract Object getSearchKey(String searchKey);
+    protected abstract Object getSearchKey(String uuid);
 
     protected abstract boolean isExist(Object searchKey);
 

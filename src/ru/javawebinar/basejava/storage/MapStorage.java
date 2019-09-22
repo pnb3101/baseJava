@@ -8,8 +8,8 @@ public class MapStorage extends AbstractStorage {
     private Map<String, Resume> storageMap = new HashMap<>();
 
     @Override
-    protected Resume getSearchKey(String searchKey) {
-        return storageMap.get(searchKey);
+    protected Resume getSearchKey(String uuid) {
+        return storageMap.get(uuid);
     }
 
     @Override

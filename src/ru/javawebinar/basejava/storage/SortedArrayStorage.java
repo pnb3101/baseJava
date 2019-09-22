@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
-    private static final Comparator<Resume> RESUME_COMPARATOR = (o1, o2) -> o1.getUuid().compareTo(o2.getUuid());
+    private static final Comparator<Resume> RESUME_COMPARATOR = Comparator.comparing(Resume::getUuid);
 
     @Override
     protected Integer getSearchKey(String uuid) {
@@ -15,17 +15,17 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected void insertResume(Resume resume, int searchKey) {
-        int insertIdx = -searchKey - 1;
+    protected void insertResume(Resume resume, int index) {
+        int insertIdx = -index - 1;
         System.arraycopy(storage, insertIdx, storage, insertIdx + 1, size - insertIdx);
         storage[insertIdx] = resume;
     }
 
     @Override
-    protected void fillDeletedResume(int searchKey) {
-        int numMoved = size - searchKey - 1;
+    protected void fillDeletedResume(int index) {
+        int numMoved = size - index - 1;
         if (numMoved > 0) {
-            System.arraycopy(storage, searchKey + 1, storage, searchKey, numMoved);
+            System.arraycopy(storage, index + 1, storage, index, numMoved);
         }
     }
 }
