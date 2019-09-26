@@ -1,4 +1,4 @@
 package ru.javawebinar.basejava.model;
 
-public class ContactInfo {
+public abstract class Section {
 }
