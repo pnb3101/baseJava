@@ -3,21 +3,20 @@ package ru.javawebinar.basejava.model;
 import java.util.List;
 import java.util.Objects;
 
-public class AchievementsAndQualification extends Section {
-    private final List<String> info;
+public class OrganizationsData extends AbstractSection {
+    private final List<Organization> info;
 
-    public AchievementsAndQualification(List<String> info) {
-        Objects.requireNonNull(info, "section must not be null");
+    public OrganizationsData(List<Organization> info) {
         this.info = info;
     }
 
-    public List<String> getInfo() {
+    public List<Organization> getInfo() {
         return info;
     }
 
     @Override
     public String toString() {
-        return "ListSection{" +
+        return "OrganizationData{" +
                 "info=" + info +
                 '}';
     }
@@ -26,7 +25,7 @@ public class AchievementsAndQualification extends Section {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AchievementsAndQualification that = (AchievementsAndQualification) o;
+        OrganizationsData that = (OrganizationsData) o;
         return info.equals(that.info);
     }
 

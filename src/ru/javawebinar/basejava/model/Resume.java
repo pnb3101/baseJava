@@ -14,7 +14,7 @@ public class Resume implements Comparable<Resume> {
     private final String uuid;
     private final String fullName;
     private final Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
-    private final Map<SectionType, Section> sections = new EnumMap<>(SectionType.class);
+    private final Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
@@ -37,22 +37,45 @@ public class Resume implements Comparable<Resume> {
         if (o == null || getClass() != o.getClass()) return false;
         Resume resume = (Resume) o;
         return Objects.equals(uuid, resume.uuid) &&
-                Objects.equals(fullName, resume.fullName);
+                Objects.equals(fullName, resume.fullName) &&
+                Objects.equals(contacts, resume.contacts) &&
+                Objects.equals(sections, resume.sections);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, fullName);
+        return Objects.hash(uuid, fullName, contacts, sections);
     }
 
     @Override
     public String toString() {
-        return uuid + '(' + fullName + ')';
+        return "Resume{" +
+                "uuid='" + uuid + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", contacts=" + contacts +
+                ", sections=" + sections +
+                '}';
     }
 
     @Override
     public int compareTo(Resume o) {
         int n = fullName.compareTo(o.fullName);
         return n != 0 ? n : uuid.compareTo(o.uuid);
+    }
+
+    public String getContacts(ContactType type) {
+        return contacts.get(type);
+    }
+
+    public AbstractSection getSections(SectionType type) {
+        return sections.get(type);
+    }
+
+    public void addContact(ContactType typeContact, String contact){
+        contacts.put(typeContact, contact);
+    }
+
+    public void addSection(SectionType typeSection, AbstractSection section){
+        sections.put(typeSection, section);
     }
 }

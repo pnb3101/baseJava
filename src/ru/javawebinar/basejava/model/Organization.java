@@ -1,18 +1,19 @@
 package ru.javawebinar.basejava.model;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Objects;
 
 public class Organization {
     private final String link;
-    private final String title;
-    private final LocalDate dateOfStart;
-    private final LocalDate dateOfFinish;
+    private final String position;
+    private final String dateOfStart;
+    private final String dateOfFinish;
     private final String info;
 
-    public Organization(String link, String title, LocalDate dateOfStart, LocalDate dateOfFinish, String info) {
+    public Organization(String link, String position, String dateOfStart, String dateOfFinish, String info) {
         this.link = link;
-        this.title = title;
+        this.position = position;
         this.dateOfStart = dateOfStart;
         this.dateOfFinish = dateOfFinish;
         this.info = info;
@@ -24,7 +25,7 @@ public class Organization {
         if (o == null || getClass() != o.getClass()) return false;
         Organization that = (Organization) o;
         return link.equals(that.link) &&
-                title.equals(that.title) &&
+                position.equals(that.position) &&
                 dateOfStart.equals(that.dateOfStart) &&
                 dateOfFinish.equals(that.dateOfFinish) &&
                 info.equals(that.info);
@@ -32,6 +33,17 @@ public class Organization {
 
     @Override
     public int hashCode() {
-        return Objects.hash(link, title, dateOfStart, dateOfFinish, info);
+        return Objects.hash(link, position, dateOfStart, dateOfFinish, info);
+    }
+
+    @Override
+    public String toString() {
+        return "Organization{" +
+                "link='" + link + '\'' +
+                ", title='" + position + '\'' +
+                ", dateOfStart=" + dateOfStart +
+                ", dateOfFinish=" + dateOfFinish +
+                ", info='" + info + '\'' +
+                '}';
     }
 }
