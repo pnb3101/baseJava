@@ -31,6 +31,22 @@ public class Resume implements Comparable<Resume> {
         return uuid;
     }
 
+    public String getContacts(ContactType type) {
+        return contacts.get(type);
+    }
+
+    public AbstractSection getSections(SectionType type) {
+        return sections.get(type);
+    }
+
+    public void addContact(ContactType typeContact, String contact){
+        contacts.put(typeContact, contact);
+    }
+
+    public void addSection(SectionType typeSection, AbstractSection section){
+        sections.put(typeSection, section);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -61,21 +77,5 @@ public class Resume implements Comparable<Resume> {
     public int compareTo(Resume o) {
         int n = fullName.compareTo(o.fullName);
         return n != 0 ? n : uuid.compareTo(o.uuid);
-    }
-
-    public String getContacts(ContactType type) {
-        return contacts.get(type);
-    }
-
-    public AbstractSection getSections(SectionType type) {
-        return sections.get(type);
-    }
-
-    public void addContact(ContactType typeContact, String contact){
-        contacts.put(typeContact, contact);
-    }
-
-    public void addSection(SectionType typeSection, AbstractSection section){
-        sections.put(typeSection, section);
     }
 }

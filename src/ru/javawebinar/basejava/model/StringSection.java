@@ -1,12 +1,11 @@
 package ru.javawebinar.basejava.model;
-
 import java.util.Objects;
 
-public class StringsData extends AbstractSection {
+public class StringSection extends AbstractSection {
     private final String info;
 
 
-    public StringsData(String info) {
+    public StringSection(String info) {
         Objects.requireNonNull(info, "section must not be null");
         this.info = info;
     }
@@ -19,7 +18,7 @@ public class StringsData extends AbstractSection {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        StringsData that = (StringsData) o;
+        StringSection that = (StringSection) o;
         return info.equals(that.info);
     }
 

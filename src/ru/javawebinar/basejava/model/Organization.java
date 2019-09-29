@@ -1,17 +1,16 @@
 package ru.javawebinar.basejava.model;
 
-import java.time.LocalDate;
-import java.util.Date;
+import java.time.YearMonth;
 import java.util.Objects;
 
 public class Organization {
     private final String link;
     private final String position;
-    private final String dateOfStart;
-    private final String dateOfFinish;
+    private final YearMonth dateOfStart;
+    private final YearMonth dateOfFinish;
     private final String info;
 
-    public Organization(String link, String position, String dateOfStart, String dateOfFinish, String info) {
+    public Organization(String link, String position, YearMonth dateOfStart, YearMonth dateOfFinish, String info) {
         this.link = link;
         this.position = position;
         this.dateOfStart = dateOfStart;
