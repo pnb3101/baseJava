@@ -30,4 +30,16 @@ public class MainFile {
             throw new RuntimeException(e);
         }
     }
+
+    public void getAllFileNames(File file) {
+        File[] files = file.listFiles();
+        for (File f : files) {
+            if (f.isDirectory()) {
+                getAllFileNames(f);
+            } else {
+                System.out.println(f.getName());
+            }
+        }
+    }
 }
+

@@ -114,7 +114,7 @@ public class ResumeTestData {
                 YearMonth.parse("1998-03"), "6 месяцев обучения цифровым телефонным сетям (Москва)"));
         education.add(new Organization("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики\n", "", YearMonth.parse("1993-09"),
                 YearMonth.parse("1996-07"), "Аспирантура (программист С, С++)"));
-        education.add(new Organization("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики\n", "", YearMonth.parse("1987-09"),
+        education.add(new Organization("", YearMonth.parse("1987-09"),
                 YearMonth.parse("1993-07"), "Инженер (программист Fortran, C)"));
         education.add(new Organization("Заочная физико-техническая школа при МФТИ\n", "", YearMonth.parse("1984-09"),
                 YearMonth.parse("1987-06"), "Закончил с отличием"));

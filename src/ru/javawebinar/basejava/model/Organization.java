@@ -4,7 +4,7 @@ import java.time.YearMonth;
 import java.util.Objects;
 
 public class Organization {
-    private final String link;
+    private String link;
     private final String position;
     private final YearMonth dateOfStart;
     private final YearMonth dateOfFinish;
@@ -12,6 +12,13 @@ public class Organization {
 
     public Organization(String link, String position, YearMonth dateOfStart, YearMonth dateOfFinish, String info) {
         this.link = link;
+        this.position = position;
+        this.dateOfStart = dateOfStart;
+        this.dateOfFinish = dateOfFinish;
+        this.info = info;
+    }
+
+    public Organization(String position, YearMonth dateOfStart, YearMonth dateOfFinish, String info) {
         this.position = position;
         this.dateOfStart = dateOfStart;
         this.dateOfFinish = dateOfFinish;
