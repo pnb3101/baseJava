@@ -6,7 +6,7 @@ public class StringSection extends AbstractSection {
 
 
     public StringSection(String info) {
-        Objects.requireNonNull(info, "section must not be null");
+        Objects.requireNonNull(info, "info must not be null");
         this.info = info;
     }
 

@@ -38,7 +38,7 @@ public class ResumeTestData {
         achievements.add("Создание JavaEE фреймворка для отказоустойчивого взаимодействия слабо-связанных сервисов (SOA-base архитектура,\n JAX-WS, JMS, AS Glassfish). Сбор статистики сервисов и информации о состоянии через систему мониторинга Nagios.\n Реализация онлайн клиента для администрирования и мониторинга системы по JMX (Jython/ Django). ");
         achievements.add("Реализация протоколов по приему платежей всех основных платежных системы России (Cyberplat, Eport, Chronopay,\n Сбербанк), Белоруcсии(Erip, Osmp) и Никарагуа.");
 
-        resume.addSection(SectionType.ACHIEVEMENT, new ListData(achievements));
+        resume.addSection(SectionType.ACHIEVEMENT, new ListSection(achievements));
 
         //заполняем блок "Квалификация"
         List<String> qualification = new ArrayList<>();
@@ -64,7 +64,7 @@ public class ResumeTestData {
                 " функционального программирования ");
         qualification.add("Родной русский, английский \"upper intermediate\"");
 
-        resume.addSection(SectionType.QUALIFICATIONS, new ListData(qualification));
+        resume.addSection(SectionType.QUALIFICATIONS, new ListSection(qualification));
 
         //заполняем блок "Опыт работы" String link, String title, LocalDate dateOfStart, LocalDate dateOfFinish, String info
         List<Organization> experience = new ArrayList<>();
@@ -100,7 +100,7 @@ public class ResumeTestData {
         experience.add(new Organization("Alcatel\n", "Инженер по аппаратному и программному тестированию", YearMonth.parse("1997-09"),
                 YearMonth.parse("2005-01"), "Тестирование, отладка, внедрение ПО цифровой телефонной станции Alcatel 1000 S12 (CHILL, ASM)."));
 
-        resume.addSection(SectionType.EXPERIENCE, new OrganizationsData(experience));
+        resume.addSection(SectionType.EXPERIENCE, new OrganizationSection(experience));
 
         //заполняем блок "Образование"
         List<Organization> education = new ArrayList<>();
@@ -119,7 +119,7 @@ public class ResumeTestData {
         education.add(new Organization("Заочная физико-техническая школа при МФТИ\n", "", YearMonth.parse("1984-09"),
                 YearMonth.parse("1987-06"), "Закончил с отличием"));
 
-        resume.addSection(SectionType.EDUCATION, new OrganizationsData(education));
+        resume.addSection(SectionType.EDUCATION, new OrganizationSection(education));
 
         System.out.println(resume);
     }

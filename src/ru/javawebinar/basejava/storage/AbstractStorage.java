@@ -6,12 +6,14 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
-public abstract class AbstractStorage implements Storage {
+public abstract class AbstractStorage<SK> implements Storage {
+    private static final Logger LOG = Logger.getLogger(AbstractStorage.class.getName());
 
     @Override
     public void update(Resume resume) {
-        Object searchKey = getSearchKey(resume.getUuid());
+        SK searchKey = getSearchKey(resume.getUuid());
         if (!isExist(searchKey)) {
             throw new NotExistStorageException(resume.getUuid());
         } else {
@@ -21,7 +23,7 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void save(Resume resume) {
-        Object searchKey = getSearchKey(resume.getUuid());
+        SK searchKey = getSearchKey(resume.getUuid());
         if (isExist(searchKey)) {
             throw new ExistStorageException(resume.getUuid());
         } else {
@@ -31,7 +33,7 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        Object searchKey = getSearchKey(uuid);
+        SK searchKey = getSearchKey(uuid);
         if (!isExist(searchKey)) {
             throw new NotExistStorageException(uuid);
         } else {
@@ -41,7 +43,7 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        Object searchKey = getSearchKey(uuid);
+        SK searchKey = getSearchKey(uuid);
         if (!isExist(searchKey)) {
             throw new NotExistStorageException(uuid);
         } else {
@@ -58,15 +60,15 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract List<Resume> getListResumes();
 
-    protected abstract Object getSearchKey(String uuid);
+    protected abstract SK getSearchKey(String uuid);
 
-    protected abstract boolean isExist(Object searchKey);
+    protected abstract boolean isExist(SK searchKey);
 
-    protected abstract void updateInStorage(Resume resume, Object searchKey);
+    protected abstract void updateInStorage(Resume resume, SK searchKey);
 
-    protected abstract void saveInStorage(Resume resume, Object searchKey);
+    protected abstract void saveInStorage(Resume resume, SK searchKey);
 
-    protected abstract Resume getFromStorage(Object searchKey);
+    protected abstract Resume getFromStorage(SK searchKey);
 
-    protected abstract void deleteFromStorage(Object searchKey);
+    protected abstract void deleteFromStorage(SK searchKey);
 }
