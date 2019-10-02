@@ -1,5 +1,7 @@
 package ru.javawebinar.basejava;
 
+import ru.javawebinar.basejava.exception.StorageException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,15 +31,21 @@ public class MainFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        getAllFileNames(dir);
     }
 
-    public void getAllFileNames(File file) {
+    public static void getAllFileNames(File file) {
         File[] files = file.listFiles();
-        for (File f : files) {
-            if (f.isDirectory()) {
-                getAllFileNames(f);
-            } else {
-                System.out.println(f.getName());
+        if (files == null) {
+            throw new StorageException("Directory is empty: ", file.getName());
+        } else {
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    getAllFileNames(f);
+                } else {
+                    System.out.println(f.getName());
+                }
             }
         }
     }
