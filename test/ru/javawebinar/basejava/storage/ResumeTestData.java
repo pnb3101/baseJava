@@ -5,15 +5,15 @@ import ru.javawebinar.basejava.model.*;
 import java.time.YearMonth;
 
 public class ResumeTestData {
-    protected static final String UUID_1 = "uuid1";
-    protected static final String UUID_2 = "uuid2";
-    protected static final String UUID_3 = "uuid3";
-    protected static final String UUID_4 = "uuid4";
+     static final String UUID_1 = "uuid1";
+     static final String UUID_2 = "uuid2";
+     static final String UUID_3 = "uuid3";
+     static final String UUID_4 = "uuid4";
 
-    protected static final Resume RESUME_1;
-    protected static final Resume RESUME_2;
-    protected static final Resume RESUME_3;
-    protected static final Resume RESUME_4;
+     static final Resume RESUME_1;
+     static final Resume RESUME_2;
+     static final Resume RESUME_3;
+     static final Resume RESUME_4;
 
     static {
         RESUME_1 = new Resume(UUID_1, "Name1");
@@ -127,5 +127,9 @@ public class ResumeTestData {
                                 YearMonth.parse("1993-07"), "Инженер (программист Fortran, C)"),
                         new Organization("Заочная физико-техническая школа при МФТИ\n", "", YearMonth.parse("1984-09"),
                                 YearMonth.parse("1987-06"), "Закончил с отличием")));
+    }
+
+    static Resume createResume(String uuid, String fullName){
+        return new Resume(uuid, fullName);
     }
 }

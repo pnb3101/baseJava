@@ -14,18 +14,18 @@ import static org.junit.Assert.assertSame;
 import static ru.javawebinar.basejava.storage.ResumeTestData.*;
 
 public abstract class AbstractStorageTest {
-    protected Storage storage;
+    Storage storage;
 
-    public AbstractStorageTest(Storage storage) {
+    AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
 
     @Before
     public void setUp() throws Exception {
         storage.clear();
-        storage.save(RESUME_1);
-        storage.save(RESUME_2);
-        storage.save(RESUME_3);
+        storage.save(createResume(UUID_1, "Name1"));
+        storage.save(createResume(UUID_2, "Name2"));
+        storage.save(createResume(UUID_3, "Name3"));
     }
 
     @Test
@@ -40,14 +40,14 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume updatedResume = new Resume(UUID_1, "New Name");
+        Resume updatedResume = createResume(UUID_1, "New Name");
         storage.update(updatedResume);
         assertSame(updatedResume, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)
     public void updateException() {
-        storage.update(RESUME_4);
+        storage.update(createResume(UUID_4, "Григорий Кислин"));
     }
 
 
@@ -66,13 +66,14 @@ public abstract class AbstractStorageTest {
     public void getAllSorted() {
         List<Resume> resumesAfterGet = storage.getAllSorted();
         assertEquals(3, resumesAfterGet.size());
-        assertEquals(Arrays.asList(RESUME_1, RESUME_2, RESUME_3), resumesAfterGet);
+        assertEquals(Arrays.asList(createResume(UUID_1, "Name1"), createResume(UUID_2, "Name2"),
+                createResume(UUID_3, "Name3")), resumesAfterGet);
     }
 
     @Test
     public void save() {
-        storage.save(RESUME_4);
-        assertEquals(storage.get(UUID_4), RESUME_4);
+        storage.save(createResume(UUID_4, "Григорий Кислин"));
+        assertEquals(storage.get(UUID_4), createResume(UUID_4, "Григорий Кислин"));
     }
 
     @Test(expected = ExistStorageException.class)
