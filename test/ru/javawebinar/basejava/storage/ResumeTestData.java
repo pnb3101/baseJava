@@ -5,36 +5,22 @@ import ru.javawebinar.basejava.model.*;
 import java.time.YearMonth;
 
 public class ResumeTestData {
-     static final String UUID_1 = "uuid1";
-     static final String UUID_2 = "uuid2";
-     static final String UUID_3 = "uuid3";
-     static final String UUID_4 = "uuid4";
+    public static void main(String[] args) {
+        Resume resume = new Resume("uuid4", "Григорий Кислин");
+        resume.addContact(ContactType.PHONE_NUMBER, "+7(921) 855-0482");
+        resume.addContact(ContactType.EMAIL, "gkislin@yandex.ru");
+        resume.addContact(ContactType.LINKED_PROFILE, "Профиль LinkedIn");
+        resume.addContact(ContactType.GITHUB_PROFILE, "Профиль LinkedIn");
+        resume.addContact(ContactType.STACKOVERFLOW_PROFILE, "Профиль Stackoverflow");
+        resume.addContact(ContactType.HOME_PAGE, "Домашняя страница");
 
-     static final Resume RESUME_1;
-     static final Resume RESUME_2;
-     static final Resume RESUME_3;
-     static final Resume RESUME_4;
-
-    static {
-        RESUME_1 = new Resume(UUID_1, "Name1");
-        RESUME_2 = new Resume(UUID_2, "Name2");
-        RESUME_3 = new Resume(UUID_3, "Name3");
-        RESUME_4 = new Resume(UUID_4, "Григорий Кислин");
-
-        RESUME_4.addContact(ContactType.PHONE_NUMBER, "+7(921) 855-0482");
-        RESUME_4.addContact(ContactType.EMAIL, "gkislin@yandex.ru");
-        RESUME_4.addContact(ContactType.LINKED_PROFILE, "Профиль LinkedIn");
-        RESUME_4.addContact(ContactType.GITHUB_PROFILE, "Профиль LinkedIn");
-        RESUME_4.addContact(ContactType.STACKOVERFLOW_PROFILE, "Профиль Stackoverflow");
-        RESUME_4.addContact(ContactType.HOME_PAGE, "Домашняя страница");
-
-        RESUME_4.addSection(SectionType.OBJECTIVE, new StringSection("Позиция\\n\" +\n" +
+        resume.addSection(SectionType.OBJECTIVE, new StringSection("Позиция\\n\" +\n" +
                 "                \"Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
 
-        RESUME_4.addSection(SectionType.PERSONAL, new StringSection("Личные качества\n" +
+        resume.addSection(SectionType.PERSONAL, new StringSection("Личные качества\n" +
                 "Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
 
-        RESUME_4.addSection(SectionType.ACHIEVEMENT,
+        resume.addSection(SectionType.ACHIEVEMENT,
                 new ListSection("Достижения\n",
                         "С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\", \"Многомодульный maven.\n " +
                                 "Многопоточность. XML (JAXB/StAX). Веб сервисы (JAX-RS/SOAP). Удаленное взаимодействие (JMS/AKKA)\".\n " +
@@ -52,7 +38,7 @@ public class ResumeTestData {
                         "Реализация протоколов по приему платежей всех основных платежных системы России (Cyberplat, Eport, Chronopay,\n Сбербанк)," +
                                 " Белоруcсии(Erip, Osmp) и Никарагуа."));
 
-        RESUME_4.addSection(SectionType.QUALIFICATIONS,
+        resume.addSection(SectionType.QUALIFICATIONS,
                 new ListSection("Квалификация\n",
                         "JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2 ",
                         "Version control: Subversion, Git, Mercury, ClearCase, Perforce",
@@ -74,7 +60,7 @@ public class ResumeTestData {
                                 + " функционального программирования ",
                         "Родной русский, английский \"upper intermediate\""));
 
-        RESUME_4.addSection(SectionType.EXPERIENCE,
+        resume.addSection(SectionType.EXPERIENCE,
                 new OrganizationSection(
                         new Organization("Java Online Projects\n", "Автор проекта", YearMonth.parse("2013-10"), YearMonth.now(),
                                 "Создание, организация" + " и проведение Java онлайн проектов и стажировок."),
@@ -110,7 +96,7 @@ public class ResumeTestData {
                                 " (CHILL, ASM).")
                 ));
 
-        RESUME_4.addSection(SectionType.EDUCATION,
+        resume.addSection(SectionType.EDUCATION,
                 new OrganizationSection(
                         new Organization("Coursera\n", "", YearMonth.parse("2013-03"),
                                 YearMonth.parse("2013-05"), "\"Functional Programming Principles in Scala\" by Martin Odersky"),
@@ -127,9 +113,10 @@ public class ResumeTestData {
                                 YearMonth.parse("1993-07"), "Инженер (программист Fortran, C)"),
                         new Organization("Заочная физико-техническая школа при МФТИ\n", "", YearMonth.parse("1984-09"),
                                 YearMonth.parse("1987-06"), "Закончил с отличием")));
+
     }
 
-    static Resume createResume(String uuid, String fullName){
+    Resume createResume(String uuid, String fullName) {
         return new Resume(uuid, fullName);
     }
 }
