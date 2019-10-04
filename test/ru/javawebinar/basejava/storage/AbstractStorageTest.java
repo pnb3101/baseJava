@@ -14,18 +14,17 @@ import static org.junit.Assert.assertSame;
 
 
 public abstract class AbstractStorageTest {
-    Storage storage;
-    static ResumeTestData resume = new ResumeTestData();
+    protected Storage storage;
 
-    static final String UUID_1 = "uuid1";
-    static final String UUID_2 = "uuid2";
-    static final String UUID_3 = "uuid3";
-    static final String UUID_4 = "uuid4";
+    private static final String UUID_1 = "uuid1";
+    private static final String UUID_2 = "uuid2";
+    private static final String UUID_3 = "uuid3";
+    private static final String UUID_4 = "uuid4";
 
-    static final Resume RESUME_1 = resume.createResume(UUID_1, "Name1");
-    static final Resume RESUME_2 = resume.createResume(UUID_2, "Name2");
-    static final Resume RESUME_3 = resume.createResume(UUID_3, "Name3");
-    static final Resume RESUME_4 = resume.createResume(UUID_4, "Григорий Кислин");
+    private static final Resume RESUME_1 = ResumeTestData.createResume(UUID_1, "Name1");
+    private static final Resume RESUME_2 = ResumeTestData.createResume(UUID_2, "Name2");
+    private static final Resume RESUME_3 = ResumeTestData.createResume(UUID_3, "Name3");
+    private static final Resume RESUME_4 = ResumeTestData.createResume(UUID_4, "Григорий Кислин");
 
     AbstractStorageTest(Storage storage) {
         this.storage = storage;
