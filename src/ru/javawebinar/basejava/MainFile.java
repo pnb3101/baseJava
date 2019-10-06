@@ -35,16 +35,17 @@ public class MainFile {
         getAllFileNames(dir);
     }
 
-    public static void getAllFileNames(File file) {
+    private static void getAllFileNames(File file) {
         File[] files = file.listFiles();
         if (files == null) {
             throw new StorageException("Directory is empty: ", file.getName());
         } else {
             for (File f : files) {
                 if (f.isDirectory()) {
+                    System.out.println(f.getName());
                     getAllFileNames(f);
                 } else {
-                    System.out.println(f.getName());
+                    System.out.println("  " + f.getName());
                 }
             }
         }

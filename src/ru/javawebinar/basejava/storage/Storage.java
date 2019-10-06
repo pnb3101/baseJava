@@ -2,7 +2,7 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.model.Resume;
 
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.List;
 
 public interface Storage {
@@ -18,5 +18,5 @@ public interface Storage {
 
     List<Resume> getAllSorted();
 
-    int size();
+    int size() throws IOException;
 }

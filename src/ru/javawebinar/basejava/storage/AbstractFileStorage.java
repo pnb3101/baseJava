@@ -3,8 +3,7 @@ package ru.javawebinar.basejava.storage;
 import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,9 +22,9 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         this.directory = directory;
     }
 
-    public abstract void doWrite(Resume resume, File file);
+    abstract void doWrite(Resume resume, OutputStream os) throws IOException;
 
-    public abstract Resume doRead(File file);
+    abstract Resume doRead(InputStream is) throws IOException, ClassNotFoundException;
 
     @Override
     protected List<Resume> getListResumes() {
@@ -49,17 +48,13 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected boolean isExist(File file) {
-        if (!file.exists()) {
-            throw new StorageException("File is not exist: ", file.getName());
-        } else {
-            return file.exists();
-        }
+        return file.exists();
     }
 
     @Override
     protected void updateInStorage(Resume resume, File file) {
         try {
-            doWrite(resume, file);
+            doWrite(resume, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (Exception e) {
             throw new StorageException("IO error", file.getName(), e);
         }
@@ -69,15 +64,21 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     protected void saveInStorage(Resume resume, File file) {
         try {
             file.createNewFile();
-            doWrite(resume, file);
         } catch (IOException e) {
-            throw new StorageException("IO error", file.getName(), e);
+            throw new StorageException("Error with creation of new file", file.getName(), e);
         }
+        updateInStorage(resume, file);
     }
 
     @Override
     protected Resume getFromStorage(File file) {
-        return doRead(file);
+        try {
+            return doRead(new BufferedInputStream(new FileInputStream(file)));
+        } catch (ClassNotFoundException e) {
+            throw new StorageException("Error read resume", null, e);
+        } catch (IOException e) {
+            throw new StorageException("Not found file. ", null, e);
+        }
     }
 
     @Override

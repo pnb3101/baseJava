@@ -5,6 +5,8 @@ import org.junit.Test;
 import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
 
+import java.io.IOException;
+
 public abstract class AbstractArrayStorageTest extends AbstractStorageTest {
 
     protected AbstractArrayStorageTest(Storage storage) {
@@ -17,7 +19,7 @@ public abstract class AbstractArrayStorageTest extends AbstractStorageTest {
             while (storage.size() < AbstractArrayStorage.STORAGE_LIMIT) {
                 storage.save(new Resume("Name"));
             }
-        } catch (StorageException e) {
+        } catch (StorageException | IOException e) {
             Assert.fail("Test is fail.");
             System.out.println(e.toString());
         }

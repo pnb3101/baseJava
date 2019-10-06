@@ -1,9 +1,10 @@
 package ru.javawebinar.basejava.model;
 
+import java.io.Serializable;
 import java.time.YearMonth;
 import java.util.Objects;
 
-public class Organization {
+public class Organization implements Serializable {
     private String link;
     private final String position;
     private final YearMonth dateOfStart;
