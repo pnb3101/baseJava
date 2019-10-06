@@ -9,9 +9,10 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class AbstractFileStorage extends AbstractStorage<File> {
+    private StreamStrategy strategy;
     private File directory;
 
-    public AbstractFileStorage(File directory) {
+    public AbstractFileStorage(File directory, StreamStrategy strategy) {
         Objects.requireNonNull(directory, "directory must not be null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
@@ -20,6 +21,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
         }
         this.directory = directory;
+        this.strategy = strategy;
     }
 
     abstract void doWrite(Resume resume, OutputStream os) throws IOException;

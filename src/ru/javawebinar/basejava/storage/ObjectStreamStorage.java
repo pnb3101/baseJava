@@ -5,7 +5,7 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStorage extends AbstractFileStorage implements StreamStrategy{
+public class ObjectStreamStorage extends AbstractFileStorage implements StreamStrategy {
     public ObjectStreamStorage(File directory) {
         super(directory);
     }

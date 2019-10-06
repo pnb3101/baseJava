@@ -12,16 +12,18 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+    private StreamStrategy strategy;
     private Path directory;
 
-    public AbstractPathStorage(String dir) {
+    public AbstractPathStorage(String dir, StreamStrategy strategy) {
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(dir + " is not directory or is not writable");
         }
+        this.strategy = strategy;
     }
-    
+
     abstract void doWrite(Resume resume, OutputStream os) throws IOException;
 
     abstract Resume doRead(InputStream is) throws IOException, ClassNotFoundException;
@@ -85,7 +87,8 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            throw new StorageException("Error delete resume", null, e);        }
+            throw new StorageException("Error delete resume", null, e);
+        }
     }
 
     @Override
@@ -99,6 +102,6 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
 
     @Override
     public int size() throws IOException {
-            return (int)Files.list(directory).count();
+        return (int) Files.list(directory).count();
     }
 }
