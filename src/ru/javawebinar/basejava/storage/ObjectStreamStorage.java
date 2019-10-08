@@ -5,10 +5,7 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStorage extends AbstractFileStorage implements StreamStrategy {
-    public ObjectStreamStorage(File directory) {
-        super(directory);
-    }
+public class ObjectStreamStorage implements StreamStrategy {
 
     @Override
     public void doWrite(Resume resume, OutputStream os) throws IOException {
