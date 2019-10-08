@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+public class PathStorage extends AbstractStorage<Path> {
     private StreamStrategy strategy;
     private Path directory;
 
-    public AbstractPathStorage(String dir, StreamStrategy strategy) {
+    public PathStorage(String dir, StreamStrategy strategy) {
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
@@ -23,10 +23,6 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         }
         this.strategy = strategy;
     }
-
-    abstract void doWrite(Resume resume, OutputStream os) throws IOException;
-
-    abstract Resume doRead(InputStream is) throws IOException, ClassNotFoundException;
 
     @Override
     protected List<Resume> getListResumes() {
@@ -55,7 +51,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     protected void updateInStorage(Resume resume, Path path) {
         try {
-            doWrite(resume, new BufferedOutputStream(Files.newOutputStream(path)));
+            strategy.doWrite(resume, new BufferedOutputStream(Files.newOutputStream(path)));
         } catch (Exception e) {
             throw new StorageException("IO error", path.toString(), e);
         }
@@ -74,11 +70,9 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume getFromStorage(Path path) {
         try {
-            return doRead(new BufferedInputStream(Files.newInputStream(path)));
-        } catch (ClassNotFoundException e) {
-            throw new StorageException("Error read resume", null, e);
+            return strategy.doRead(new BufferedInputStream(Files.newInputStream(path)));
         } catch (IOException e) {
-            throw new StorageException("Not found path", null, e);
+            throw new StorageException("Not found path", e);
         }
     }
 
@@ -87,7 +81,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            throw new StorageException("Error delete resume", null, e);
+            throw new StorageException("Error delete resume", e);
         }
     }
 
@@ -101,7 +95,11 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     }
 
     @Override
-    public int size() throws IOException {
-        return (int) Files.list(directory).count();
+    public int size() {
+        try {
+            return (int) Files.list(directory).count();
+        } catch (IOException e) {
+            throw new StorageException("IO exception ", e);
+        }
     }
 }

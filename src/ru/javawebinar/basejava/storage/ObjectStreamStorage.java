@@ -8,18 +8,20 @@ import java.io.*;
 public class ObjectStreamStorage implements StreamStrategy {
 
     @Override
-    public void doWrite(Resume resume, OutputStream os) throws IOException {
+    public void doWrite(Resume resume, OutputStream os) {
         try (ObjectOutputStream oos = new ObjectOutputStream(os)) {
             oos.writeObject(resume);
+        } catch (IOException e) {
+            throw new StorageException("Error write resume", e);
         }
     }
 
     @Override
-    public Resume doRead(InputStream is) throws IOException {
+    public Resume doRead(InputStream is) {
         try (ObjectInputStream ois = new ObjectInputStream(is)) {
             return (Resume) ois.readObject();
-        } catch (ClassNotFoundException e) {
-            throw new StorageException("Error read resume", null, e);
+        } catch (ClassNotFoundException | IOException e) {
+            throw new StorageException("Error read resume", e);
         }
     }
 }
