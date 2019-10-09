@@ -1,9 +1,11 @@
 package ru.javawebinar.basejava.model;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class StringSection extends AbstractSection {
-    private final String info;
-
+    private String info;
 
     public StringSection(String info) {
         Objects.requireNonNull(info, "info must not be null");

@@ -1,15 +1,21 @@
 package ru.javawebinar.basejava.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 import java.time.YearMonth;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
     private String link;
-    private final String position;
-    private final YearMonth dateOfStart;
-    private final YearMonth dateOfFinish;
-    private final String info;
+    private String position;
+    private YearMonth dateOfStart;
+    private YearMonth dateOfFinish;
+    private String info;
+
+    public Organization() {
+    }
 
     public Organization(String link, String position, YearMonth dateOfStart, YearMonth dateOfFinish, String info) {
         this.link = link;
