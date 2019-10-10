@@ -7,6 +7,9 @@ import java.util.Objects;
 public class StringSection extends AbstractSection {
     private String info;
 
+    public StringSection() {
+    }
+
     public StringSection(String info) {
         Objects.requireNonNull(info, "info must not be null");
         this.info = info;

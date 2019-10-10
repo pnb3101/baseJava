@@ -10,6 +10,9 @@ import java.util.Objects;
 public class ListSection extends AbstractSection {
     private List<String> info;
 
+    public ListSection() {
+    }
+
     public ListSection(String... info){
         this(Arrays.asList(info));
     }
