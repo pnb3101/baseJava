@@ -1,7 +1,10 @@
 package ru.javawebinar.basejava.model;
 
+import ru.javawebinar.basejava.util.YearMonthAdapter;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.YearMonth;
 import java.util.Objects;
@@ -10,7 +13,9 @@ import java.util.Objects;
 public class Organization implements Serializable {
     private String link;
     private String position;
+    @XmlJavaTypeAdapter(YearMonthAdapter.class)
     private YearMonth dateOfStart;
+    @XmlJavaTypeAdapter(YearMonthAdapter.class)
     private YearMonth dateOfFinish;
     private String info;
 
@@ -58,5 +63,25 @@ public class Organization implements Serializable {
                 ", dateOfFinish=" + dateOfFinish +
                 ", info='" + info + '\'' +
                 '}';
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public YearMonth getDateOfStart() {
+        return dateOfStart;
+    }
+
+    public YearMonth getDateOfFinish() {
+        return dateOfFinish;
+    }
+
+    public String getInfo() {
+        return info;
     }
 }
