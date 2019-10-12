@@ -9,7 +9,7 @@ public class ResumeTestData {
     static Resume createResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
 
-        resume.addContact(ContactType.PHONE_NUMBER, "+7(921) 855-0482");
+        resume.addContact(ContactType.PHONE_NUMBER, "+7(921) 856-0482");
         resume.addContact(ContactType.EMAIL, "gkislin@yandex.ru");
         resume.addContact(ContactType.GITHUB_PROFILE, "Профиль LinkedIn");
         resume.addContact(ContactType.STACKOVERFLOW_PROFILE, "Профиль Stackoverflow");
