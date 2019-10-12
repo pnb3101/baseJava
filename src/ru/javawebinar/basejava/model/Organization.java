@@ -7,34 +7,26 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
-    private String link;
-    private String position;
-    @XmlJavaTypeAdapter(YearMonthAdapter.class)
-    private YearMonth dateOfStart;
-    @XmlJavaTypeAdapter(YearMonthAdapter.class)
-    private YearMonth dateOfFinish;
-    private String info;
+    private Link homePage;
+    private List<Position> positions = new ArrayList<>();
 
     public Organization() {
     }
 
-    public Organization(String link, String position, YearMonth dateOfStart, YearMonth dateOfFinish, String info) {
-        this.link = link;
-        this.position = position;
-        this.dateOfStart = dateOfStart;
-        this.dateOfFinish = dateOfFinish;
-        this.info = info;
+    public Organization(String name, String url, Position... positions) {
+        this(new Link(name, url), Arrays.asList(positions));
     }
 
-    public Organization(String position, YearMonth dateOfStart, YearMonth dateOfFinish, String info) {
-        this.position = position;
-        this.dateOfStart = dateOfStart;
-        this.dateOfFinish = dateOfFinish;
-        this.info = info;
+    public Organization(Link homePage, List<Position> positions) {
+        this.homePage = homePage;
+        this.positions = positions;
     }
 
     @Override
@@ -42,46 +34,90 @@ public class Organization implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Organization that = (Organization) o;
-        return link.equals(that.link) &&
-                position.equals(that.position) &&
-                dateOfStart.equals(that.dateOfStart) &&
-                dateOfFinish.equals(that.dateOfFinish) &&
-                info.equals(that.info);
+        return Objects.equals(homePage, that.homePage) &&
+                Objects.equals(positions, that.positions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(link, position, dateOfStart, dateOfFinish, info);
+        return Objects.hash(homePage, positions);
     }
 
     @Override
     public String toString() {
         return "Organization{" +
-                "link='" + link + '\'' +
-                ", title='" + position + '\'' +
-                ", dateOfStart=" + dateOfStart +
-                ", dateOfFinish=" + dateOfFinish +
-                ", info='" + info + '\'' +
+                "homePage=" + homePage +
+                ", positions=" + positions +
                 '}';
     }
 
-    public String getLink() {
-        return link;
+    public Link getHomePage() {
+        return homePage;
     }
 
-    public String getPosition() {
-        return position;
+    public List<Position> getPositions() {
+        return positions;
     }
 
-    public YearMonth getDateOfStart() {
-        return dateOfStart;
-    }
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Position implements Serializable {
+        private String position;
+        @XmlJavaTypeAdapter(YearMonthAdapter.class)
+        private YearMonth dateOfStart;
+        @XmlJavaTypeAdapter(YearMonthAdapter.class)
+        private YearMonth dateOfFinish;
+        private String info;
 
-    public YearMonth getDateOfFinish() {
-        return dateOfFinish;
-    }
+        public Position(String position, YearMonth dateOfStart, YearMonth dateOfFinish, String info) {
+            Objects.requireNonNull(dateOfStart, "dateOfStart must not be null");
+            Objects.requireNonNull(dateOfFinish, "dateOfFinish must not be null");
+            Objects.requireNonNull(position, "position must not be null");
+            this.position = position;
+            this.dateOfStart = dateOfStart;
+            this.dateOfFinish = dateOfFinish;
+            this.info = info;
+        }
 
-    public String getInfo() {
-        return info;
+        public String getPosition() {
+            return position;
+        }
+
+        public YearMonth getDateOfStart() {
+            return dateOfStart;
+        }
+
+        public YearMonth getDateOfFinish() {
+            return dateOfFinish;
+        }
+
+        public String getInfo() {
+            return info;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Position position1 = (Position) o;
+            return position.equals(position1.position) &&
+                    dateOfStart.equals(position1.dateOfStart) &&
+                    dateOfFinish.equals(position1.dateOfFinish) &&
+                    Objects.equals(info, position1.info);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(position, dateOfStart, dateOfFinish, info);
+        }
+
+        @Override
+        public String toString() {
+            return "Position{" +
+                    "position='" + position + '\'' +
+                    ", dateOfStart=" + dateOfStart +
+                    ", dateOfFinish=" + dateOfFinish +
+                    ", info='" + info + '\'' +
+                    '}';
+        }
     }
 }
