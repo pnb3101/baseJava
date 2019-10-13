@@ -15,7 +15,7 @@ public class ResumeTestData {
         resume.addContact(ContactType.STACKOVERFLOW_PROFILE, "Профиль Stackoverflow");
         resume.addContact(ContactType.HOME_PAGE, "Домашняя страница");
         resume.addSection(SectionType.OBJECTIVE, new StringSection("Позиция\n" +
-                "                \"Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
+                "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
         resume.addSection(SectionType.PERSONAL, new StringSection("Личные качества\n" +
                 "Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
         resume.addSection(SectionType.ACHIEVEMENT,

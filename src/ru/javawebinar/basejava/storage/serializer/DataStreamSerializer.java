@@ -23,14 +23,14 @@ public class DataStreamSerializer implements StreamStrategy {
             }
 
             Map<SectionType, AbstractSection> sections = resume.getSections();
-            dos.writeInt(sections.size());
+            dos.writeInt(sections.size());//записываем кол-во секций
             for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
+                dos.writeUTF(entry.getKey().name());//записываем тип секции
                 AbstractSection section = entry.getValue();
                 if (section.getClass().equals(StringSection.class)) {
-                    dos.writeUTF(StringSection.class.toString());
-                    lengthStringSection(dos, (StringSection) section);
-                    write(dos, (StringSection) section);
+                    dos.writeUTF(StringSection.class.toString());//имя класа
+                    lengthStringSection(dos, (StringSection) section);//количество строк
+                    write(dos, (StringSection) section);//записываем строки
                 } else if (section.getClass().equals(ListSection.class)) {
                     dos.writeUTF(ListSection.class.toString());
                     lengthListSection(dos, (ListSection) section);
@@ -55,60 +55,60 @@ public class DataStreamSerializer implements StreamStrategy {
                 resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             }
 
-            int sizeSections = dis.readInt();
+            int sizeSections = dis.readInt();//читаем кол-во секций
             if (sizeSections != 0) {
-                String section = dis.readUTF();
-                if (section.equals(StringSection.class.toString())) {
-                    String sectionType = dis.readUTF();
-                    int sizeSection = dis.readInt();
-                    if (sizeSection != 0) {
-                        StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < sizeSection; i++) {
-                            sb.append(dis.readUTF());
-                        }
-                        StringSection stringSection = new StringSection(sb.toString());
-                        resume.addSection(SectionType.valueOf(sectionType), stringSection);
-                    }
-
-                } else if (section.equals(ListSection.class.toString())) {
-                    String sectionType = dis.readUTF();
-                    int sizeSection = dis.readInt();
-                    if (sizeSection != 0) {
-                        List<String> list = new ArrayList<>();
-                        for (int i = 0; i < sizeSection; i++) {
-                            list.add(dis.readUTF());
-                        }
-                        ListSection listSection = new ListSection(list);
-                        resume.addSection(SectionType.valueOf(sectionType), listSection);
-                    }
-
-                } else {
-                    String sectionType = dis.readUTF();
-                    List<Organization> list = new ArrayList<>();
-                    int sizeSection = dis.readInt();
-                    if (sizeSection != 0) {
-                        for (int i = 0; i < sizeSection; i++) {
-                            String urlExist = dis.readUTF();
-                            String nameOrganization = dis.readUTF();
-                            String url;
-                            if (urlExist.equals("URLExist")) {
-                                url = dis.readUTF();
-                            } else {
-                                url = "";
+                for (int s = 0; s < sizeSections; s++) {
+                    String sectionType = dis.readUTF();//название тип секции
+                    String section = dis.readUTF();//имя класса
+                    if (section.equals(StringSection.class.toString())) {
+                        int sizeSection = dis.readInt();//кол-во строк
+                        if (sizeSection != 0) {
+                            StringBuilder sb = new StringBuilder();
+                            for (int i = 0; i < sizeSection; i++) {
+                                sb.append(dis.readUTF());
                             }
-                            int positionsSize = dis.readInt();
-                            List<Organization.Position> positions = new ArrayList<>();
-                            for (int j = 0; j < positionsSize; j++) {
-                                String position = dis.readUTF();
-                                YearMonth dateOfStart = YearMonth.parse(dis.readUTF());
-                                YearMonth dateOfFinish = YearMonth.parse(dis.readUTF());
-                                String info = dis.readUTF();
-                                positions.add(new Organization.Position(position, dateOfStart, dateOfFinish, info));
-                            }
-                            list.add(new Organization(new Link(nameOrganization, url), positions));
+                            StringSection stringSection = new StringSection(sb.toString());
+                            resume.addSection(SectionType.valueOf(sectionType), stringSection);
                         }
+
+                    } else if (section.equals(ListSection.class.toString())) {
+                        int sizeSection = dis.readInt();
+                        if (sizeSection != 0) {
+                            List<String> list = new ArrayList<>();
+                            for (int i = 0; i < sizeSection; i++) {
+                                list.add(dis.readUTF());
+                            }
+                            ListSection listSection = new ListSection(list);
+                            resume.addSection(SectionType.valueOf(sectionType), listSection);
+                        }
+
+                    } else {
+                        List<Organization> list = new ArrayList<>();
+                        int sizeSection = dis.readInt();
+                        if (sizeSection != 0) {
+                            for (int i = 0; i < sizeSection; i++) {
+                                String urlExist = dis.readUTF();
+                                String nameOrganization = dis.readUTF();
+                                String url;
+                                if (urlExist.equals("URLExist")) {
+                                    url = dis.readUTF();
+                                } else {
+                                    url = "";
+                                }
+                                int positionsSize = dis.readInt();
+                                List<Organization.Position> positions = new ArrayList<>();
+                                for (int j = 0; j < positionsSize; j++) {
+                                    String position = dis.readUTF();
+                                    YearMonth dateOfStart = YearMonth.parse(dis.readUTF());
+                                    YearMonth dateOfFinish = YearMonth.parse(dis.readUTF());
+                                    String info = dis.readUTF();
+                                    positions.add(new Organization.Position(position, dateOfStart, dateOfFinish, info));
+                                }
+                                list.add(new Organization(new Link(nameOrganization, url), positions));
+                            }
+                        }
+                        resume.addSection(SectionType.valueOf(sectionType), new OrganizationSection(list));
                     }
-                    resume.addSection(SectionType.valueOf(sectionType), new OrganizationSection(list));
                 }
             }
             return resume;
