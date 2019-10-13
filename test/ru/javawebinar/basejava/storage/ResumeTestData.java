@@ -35,7 +35,7 @@ public class ResumeTestData {
                 new OrganizationSection(
                         new Organization("Java Online Projects\n", "https://www.javaonprojects.ru",
                                 new Organization.Position("автор курса", YearMonth.parse("2013-10"), YearMonth.now(),
-                                "Создание, организация и проведение Java онлайн проектов и стажировок."))));
+                                        "Создание, организация и проведение Java онлайн проектов и стажировок."))));
 
         resume.addSection(SectionType.EDUCATION,
                 new OrganizationSection(
@@ -43,7 +43,7 @@ public class ResumeTestData {
                                 YearMonth.parse("2013-05"), "\"Functional Programming Principles in Scala\" by Martin Odersky")),
                         new Organization("Заочная физико-техническая школа при МФТИ\n", "",
                                 new Organization.Position("аспирант", YearMonth.parse("1984-09"),
-                                YearMonth.parse("1987-06"), "Закончил с отличием"))));
+                                        YearMonth.parse("1987-06"), "Закончил с отличием"))));
         return resume;
 
     }

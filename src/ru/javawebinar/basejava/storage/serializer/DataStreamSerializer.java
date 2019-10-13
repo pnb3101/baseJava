@@ -29,7 +29,6 @@ public class DataStreamSerializer implements StreamStrategy {
                 AbstractSection section = entry.getValue();
                 if (section.getClass().equals(StringSection.class)) {
                     dos.writeUTF(StringSection.class.toString());//имя класа
-                    lengthStringSection(dos, (StringSection) section);//количество строк
                     write(dos, (StringSection) section);//записываем строки
                 } else if (section.getClass().equals(ListSection.class)) {
                     dos.writeUTF(ListSection.class.toString());
@@ -55,21 +54,14 @@ public class DataStreamSerializer implements StreamStrategy {
                 resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             }
 
-            int sizeSections = dis.readInt();//читаем кол-во секций
+            int sizeSections = dis.readInt();
             if (sizeSections != 0) {
                 for (int s = 0; s < sizeSections; s++) {
-                    String sectionType = dis.readUTF();//название тип секции
-                    String section = dis.readUTF();//имя класса
+                    String sectionType = dis.readUTF();
+                    String section = dis.readUTF();
                     if (section.equals(StringSection.class.toString())) {
-                        int sizeSection = dis.readInt();//кол-во строк
-                        if (sizeSection != 0) {
-                            StringBuilder sb = new StringBuilder();
-                            for (int i = 0; i < sizeSection; i++) {
-                                sb.append(dis.readUTF());
-                            }
-                            StringSection stringSection = new StringSection(sb.toString());
-                            resume.addSection(SectionType.valueOf(sectionType), stringSection);
-                        }
+                        StringSection stringSection = new StringSection(dis.readUTF());
+                        resume.addSection(SectionType.valueOf(sectionType), stringSection);
 
                     } else if (section.equals(ListSection.class.toString())) {
                         int sizeSection = dis.readInt();
@@ -87,8 +79,8 @@ public class DataStreamSerializer implements StreamStrategy {
                         int sizeSection = dis.readInt();
                         if (sizeSection != 0) {
                             for (int i = 0; i < sizeSection; i++) {
-                                String urlExist = dis.readUTF();
                                 String nameOrganization = dis.readUTF();
+                                String urlExist = dis.readUTF();
                                 String url;
                                 if (urlExist.equals("URLExist")) {
                                     url = dis.readUTF();
@@ -121,10 +113,6 @@ public class DataStreamSerializer implements StreamStrategy {
         dos.writeUTF(section.getInfo());
     }
 
-    private void lengthStringSection(DataOutputStream dos, StringSection section) throws IOException {
-        dos.writeInt(section.getInfo().length());
-    }
-
     private void write(DataOutputStream dos, ListSection section) throws IOException {
         List<String> info = section.getInfo();
         for (String str : info) {
@@ -149,7 +137,7 @@ public class DataStreamSerializer implements StreamStrategy {
                     dos.writeUTF("URLExist");
                     dos.writeUTF(organizations.get(i).getHomePage().getUrl());//если есть сайт
                 }
-            } else {
+
                 int positions = organizations.get(i).getPositions().size();
                 dos.writeInt(positions);//кол-во позиций
                 for (int j = 0; j < positions; j++) {
