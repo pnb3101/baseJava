@@ -68,6 +68,9 @@ public class Organization implements Serializable {
         private YearMonth dateOfFinish;
         private String info;
 
+        public Position() {
+        }
+
         public Position(String position, YearMonth dateOfStart, YearMonth dateOfFinish, String info) {
             Objects.requireNonNull(dateOfStart, "dateOfStart must not be null");
             Objects.requireNonNull(dateOfFinish, "dateOfFinish must not be null");
