@@ -44,6 +44,13 @@ public class ResumeTestData {
                         new Organization("Заочная физико-техническая школа при МФТИ\n", "",
                                 new Organization.Position("аспирант", YearMonth.parse("1984-09"),
                                         YearMonth.parse("1987-06"), "Закончил с отличием"))));
+        resume.addSection(SectionType.EDUCATION,
+                new OrganizationSection(
+                        new Organization("", "", new Organization.Position("слушатель", YearMonth.parse("2013-03"),
+                                YearMonth.parse("2013-05"), "")),
+                        new Organization("Заочная физико-техническая школа при МФТИ\n", "",
+                                new Organization.Position("аспирант", YearMonth.parse("1984-09"),
+                                        YearMonth.parse("1987-06"), ""))));
         return resume;
 
     }

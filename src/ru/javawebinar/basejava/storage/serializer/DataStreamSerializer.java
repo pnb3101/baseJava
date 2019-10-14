@@ -1,5 +1,6 @@
 package ru.javawebinar.basejava.storage.serializer;
 
+import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.*;
 
 import java.io.*;
@@ -23,21 +24,25 @@ public class DataStreamSerializer implements StreamStrategy {
             }
 
             Map<SectionType, AbstractSection> sections = resume.getSections();
-            dos.writeInt(sections.size());//записываем кол-во секций
+            dos.writeInt(sections.size());
             for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
-                dos.writeUTF(entry.getKey().name());//записываем тип секции
+                dos.writeUTF(entry.getKey().name());
                 AbstractSection section = entry.getValue();
-                if (section.getClass().equals(StringSection.class)) {
-                    dos.writeUTF(StringSection.class.toString());//имя класа
-                    write(dos, (StringSection) section);//записываем строки
-                } else if (section.getClass().equals(ListSection.class)) {
-                    dos.writeUTF(ListSection.class.toString());
-                    lengthListSection(dos, (ListSection) section);
-                    write(dos, (ListSection) section);
-                } else {
-                    dos.writeUTF(OrganizationSection.class.toString());
-                    lengthOrganizationSection(dos, (OrganizationSection) section);
-                    write(dos, (OrganizationSection) section);
+                switch (section.getClass().getSimpleName()) {
+                    case "StringSection":
+                        dos.writeUTF(StringSection.class.getSimpleName());
+                        dos.writeUTF(((StringSection) section).getInfo());
+                        break;
+                    case "ListSection":
+                        dos.writeUTF(ListSection.class.getSimpleName());
+                        dos.writeInt(((ListSection) section).getInfo().size());
+                        writeList(dos, (ListSection) section);
+                        break;
+                    case "OrganizationSection":
+                        dos.writeUTF(OrganizationSection.class.getSimpleName());
+                        dos.writeInt(((OrganizationSection) section).getOrganizatios().size());
+                        writeOrganization(dos, (OrganizationSection) section);
+                        break;
                 }
             }
         }
@@ -55,38 +60,32 @@ public class DataStreamSerializer implements StreamStrategy {
             }
 
             int sizeSections = dis.readInt();
-            if (sizeSections != 0) {
-                for (int s = 0; s < sizeSections; s++) {
-                    String sectionType = dis.readUTF();
-                    String section = dis.readUTF();
-                    if (section.equals(StringSection.class.toString())) {
+            for (int s = 0; s < sizeSections; s++) {
+                String sectionType = dis.readUTF();
+                String section = dis.readUTF();
+                switch (section) {
+                    case "StringSection":
                         StringSection stringSection = new StringSection(dis.readUTF());
                         resume.addSection(SectionType.valueOf(sectionType), stringSection);
-
-                    } else if (section.equals(ListSection.class.toString())) {
-                        int sizeSection = dis.readInt();
-                        if (sizeSection != 0) {
+                        break;
+                    case "ListSection":
+                        int sizeListSection = dis.readInt();
+                        if (sizeListSection != 0) {
                             List<String> list = new ArrayList<>();
-                            for (int i = 0; i < sizeSection; i++) {
+                            for (int i = 0; i < sizeListSection; i++) {
                                 list.add(dis.readUTF());
                             }
                             ListSection listSection = new ListSection(list);
                             resume.addSection(SectionType.valueOf(sectionType), listSection);
                         }
-
-                    } else {
+                        break;
+                    case "OrganizationSection":
                         List<Organization> list = new ArrayList<>();
-                        int sizeSection = dis.readInt();
-                        if (sizeSection != 0) {
-                            for (int i = 0; i < sizeSection; i++) {
+                        int sizeOrgSection = dis.readInt();
+                        if (sizeOrgSection != 0) {
+                            for (int i = 0; i < sizeOrgSection; i++) {
                                 String nameOrganization = dis.readUTF();
-                                String urlExist = dis.readUTF();
-                                String url;
-                                if (urlExist.equals("URLExist")) {
-                                    url = dis.readUTF();
-                                } else {
-                                    url = "";
-                                }
+                                String url = dis.readUTF();
                                 int positionsSize = dis.readInt();
                                 List<Organization.Position> positions = new ArrayList<>();
                                 for (int j = 0; j < positionsSize; j++) {
@@ -100,58 +99,53 @@ public class DataStreamSerializer implements StreamStrategy {
                             }
                         }
                         resume.addSection(SectionType.valueOf(sectionType), new OrganizationSection(list));
-                    }
+                        break;
+                    default:
+                        throw new StorageException("Problems with read path by DataStreamSerializer", "");
                 }
             }
+
             return resume;
         }
 
     }
 
-
-    private void write(DataOutputStream dos, StringSection section) throws IOException {
-        dos.writeUTF(section.getInfo());
-    }
-
-    private void write(DataOutputStream dos, ListSection section) throws IOException {
+    private void writeList(DataOutputStream dos, ListSection section) throws IOException {
         List<String> info = section.getInfo();
         for (String str : info) {
             dos.writeUTF(str);
         }
     }
 
-    private void lengthListSection(DataOutputStream dos, ListSection section) throws IOException {
-        dos.writeInt(section.getInfo().size());
-    }
-
-    private void write(DataOutputStream dos, OrganizationSection section) throws IOException {
+    private void writeOrganization(DataOutputStream dos, OrganizationSection section) throws IOException {
         List<Organization> organizations = section.getOrganizatios();
 
-        for (int i = 0; i < organizations.size(); i++) {
-            if (organizations.get(i).getHomePage().getClass().equals(Link.class)) {
-                dos.writeUTF(organizations.get(i).getHomePage().getName());//печатаем имя организации
-                if (organizations.get(i).getHomePage().getUrl().equals(null)) {
-                    dos.writeUTF("URLNotExist");
-                    dos.writeUTF("");//если нет сайта
+        for (Organization org : organizations) {
+            if (org.getHomePage().getClass().equals(Link.class)) {
+                dos.writeUTF(org.getHomePage().getName());
+                if (org.getHomePage().getUrl() == null) {
+                    dos.writeUTF("");
                 } else {
-                    dos.writeUTF("URLExist");
-                    dos.writeUTF(organizations.get(i).getHomePage().getUrl());//если есть сайт
+                    dos.writeUTF(org.getHomePage().getUrl());
                 }
-
-                int positions = organizations.get(i).getPositions().size();
-                dos.writeInt(positions);//кол-во позиций
-                for (int j = 0; j < positions; j++) {
-                    Organization.Position position = organizations.get(i).getPositions().get(j);
-                    dos.writeUTF(position.getPosition());
-                    dos.writeUTF(position.getDateOfStart().toString());
-                    dos.writeUTF(position.getDateOfFinish().toString());
+            } else {
+                dos.writeUTF("");//homePage
+                dos.writeUTF("");//URL
+            }
+            int positions = org.getPositions().size();
+            dos.writeInt(positions);
+            for (int j = 0; j < positions; j++) {
+                Organization.Position position = org.getPositions().get(j);
+                dos.writeUTF(position.getPosition());
+                dos.writeUTF(position.getDateOfStart().toString());
+                dos.writeUTF(position.getDateOfFinish().toString());
+                if (position.getInfo() != null) {
                     dos.writeUTF(position.getInfo());
+                } else {
+                    dos.writeUTF("");
                 }
             }
         }
     }
-
-    private void lengthOrganizationSection(DataOutputStream dos, OrganizationSection section) throws IOException {
-        dos.writeInt(section.getOrganizatios().size());
-    }
 }
+
