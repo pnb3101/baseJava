@@ -26,19 +26,23 @@ public class DataStreamSerializer implements StreamStrategy {
             Map<SectionType, AbstractSection> sections = resume.getSections();
             dos.writeInt(sections.size());
             for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
+                SectionType sectionType = entry.getKey();
+                dos.writeUTF(sectionType.name());
                 AbstractSection section = entry.getValue();
-                switch (section.getClass().getSimpleName()) {
-                    case "StringSection":
+                switch (sectionType) {
+                    case PERSONAL:
+                    case OBJECTIVE:
                         dos.writeUTF(StringSection.class.getSimpleName());
                         dos.writeUTF(((StringSection) section).getInfo());
                         break;
-                    case "ListSection":
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS:
                         dos.writeUTF(ListSection.class.getSimpleName());
                         dos.writeInt(((ListSection) section).getInfo().size());
                         writeList(dos, (ListSection) section);
                         break;
-                    case "OrganizationSection":
+                    case EXPERIENCE:
+                    case EDUCATION:
                         dos.writeUTF(OrganizationSection.class.getSimpleName());
                         dos.writeInt(((OrganizationSection) section).getOrganizatios().size());
                         writeOrganization(dos, (OrganizationSection) section);
@@ -61,14 +65,16 @@ public class DataStreamSerializer implements StreamStrategy {
 
             int sizeSections = dis.readInt();
             for (int s = 0; s < sizeSections; s++) {
-                String sectionType = dis.readUTF();
+                SectionType sectionType = SectionType.valueOf(dis.readUTF());
                 String section = dis.readUTF();
-                switch (section) {
-                    case "StringSection":
+                switch (sectionType) {
+                    case PERSONAL:
+                    case OBJECTIVE:
                         StringSection stringSection = new StringSection(dis.readUTF());
-                        resume.addSection(SectionType.valueOf(sectionType), stringSection);
+                        resume.addSection(sectionType, stringSection);
                         break;
-                    case "ListSection":
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS:
                         int sizeListSection = dis.readInt();
                         if (sizeListSection != 0) {
                             List<String> list = new ArrayList<>();
@@ -76,10 +82,11 @@ public class DataStreamSerializer implements StreamStrategy {
                                 list.add(dis.readUTF());
                             }
                             ListSection listSection = new ListSection(list);
-                            resume.addSection(SectionType.valueOf(sectionType), listSection);
+                            resume.addSection(sectionType, listSection);
                         }
                         break;
-                    case "OrganizationSection":
+                    case EXPERIENCE:
+                    case EDUCATION:
                         List<Organization> list = new ArrayList<>();
                         int sizeOrgSection = dis.readInt();
                         if (sizeOrgSection != 0) {
@@ -98,7 +105,7 @@ public class DataStreamSerializer implements StreamStrategy {
                                 list.add(new Organization(new Link(nameOrganization, url), positions));
                             }
                         }
-                        resume.addSection(SectionType.valueOf(sectionType), new OrganizationSection(list));
+                        resume.addSection(sectionType, new OrganizationSection(list));
                         break;
                     default:
                         throw new StorageException("Problems with read path by DataStreamSerializer", "");
@@ -119,19 +126,9 @@ public class DataStreamSerializer implements StreamStrategy {
 
     private void writeOrganization(DataOutputStream dos, OrganizationSection section) throws IOException {
         List<Organization> organizations = section.getOrganizatios();
-
         for (Organization org : organizations) {
-            if (org.getHomePage().getClass().equals(Link.class)) {
-                dos.writeUTF(org.getHomePage().getName());
-                if (org.getHomePage().getUrl() == null) {
-                    dos.writeUTF("");
-                } else {
-                    dos.writeUTF(org.getHomePage().getUrl());
-                }
-            } else {
-                dos.writeUTF("");//homePage
-                dos.writeUTF("");//URL
-            }
+            dos.writeUTF(org.getHomePage().getName());
+            dos.writeUTF(org.getHomePage().getUrl());
             int positions = org.getPositions().size();
             dos.writeInt(positions);
             for (int j = 0; j < positions; j++) {
