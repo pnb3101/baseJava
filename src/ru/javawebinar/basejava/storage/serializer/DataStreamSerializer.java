@@ -6,6 +6,7 @@ import ru.javawebinar.basejava.model.*;
 import java.io.*;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -23,32 +24,25 @@ public class DataStreamSerializer implements StreamStrategy {
                 dos.writeUTF(entry.getValue());
             }
 
-            Map<SectionType, AbstractSection> sections = resume.getSections();
-            dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
+            writeWithException(dos, resume.getSections().entrySet(), entry ->{
                 SectionType sectionType = entry.getKey();
                 dos.writeUTF(sectionType.name());
                 AbstractSection section = entry.getValue();
                 switch (sectionType) {
                     case PERSONAL:
                     case OBJECTIVE:
-                        dos.writeUTF(StringSection.class.getSimpleName());
                         dos.writeUTF(((StringSection) section).getInfo());
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        dos.writeUTF(ListSection.class.getSimpleName());
-                        dos.writeInt(((ListSection) section).getInfo().size());
                         writeList(dos, (ListSection) section);
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        dos.writeUTF(OrganizationSection.class.getSimpleName());
-                        dos.writeInt(((OrganizationSection) section).getOrganizatios().size());
                         writeOrganization(dos, (OrganizationSection) section);
                         break;
                 }
-            }
+            });
         }
     }
 
@@ -58,15 +52,14 @@ public class DataStreamSerializer implements StreamStrategy {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            int size = dis.readInt();
-            for (int i = 0; i < size; i++) {
+            int sizeContact = dis.readInt();
+            for (int i = 0; i < sizeContact; i++) {
                 resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             }
 
-            int sizeSections = dis.readInt();
-            for (int s = 0; s < sizeSections; s++) {
+            readWithException(dis, ()-> {
+                int size = dis.readInt();
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
-                String section = dis.readUTF();
                 switch (sectionType) {
                     case PERSONAL:
                     case OBJECTIVE:
@@ -75,22 +68,17 @@ public class DataStreamSerializer implements StreamStrategy {
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        int sizeListSection = dis.readInt();
-                        if (sizeListSection != 0) {
                             List<String> list = new ArrayList<>();
-                            for (int i = 0; i < sizeListSection; i++) {
+                            for (int i = 0; i < size; i++) {
                                 list.add(dis.readUTF());
                             }
                             ListSection listSection = new ListSection(list);
                             resume.addSection(sectionType, listSection);
-                        }
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        List<Organization> list = new ArrayList<>();
-                        int sizeOrgSection = dis.readInt();
-                        if (sizeOrgSection != 0) {
-                            for (int i = 0; i < sizeOrgSection; i++) {
+                        List<Organization> listOrg = new ArrayList<>();
+                            for (int i = 0; i < size; i++) {
                                 String nameOrganization = dis.readUTF();
                                 String url = dis.readUTF();
                                 int positionsSize = dis.readInt();
@@ -102,19 +90,17 @@ public class DataStreamSerializer implements StreamStrategy {
                                     String info = dis.readUTF();
                                     positions.add(new Organization.Position(position, dateOfStart, dateOfFinish, info));
                                 }
-                                list.add(new Organization(new Link(nameOrganization, url), positions));
+                                listOrg.add(new Organization(new Link(nameOrganization, url), positions));
                             }
-                        }
-                        resume.addSection(sectionType, new OrganizationSection(list));
+                        resume.addSection(sectionType, new OrganizationSection(listOrg));
                         break;
                     default:
                         throw new StorageException("Problems with read path by DataStreamSerializer", "");
                 }
-            }
+            });
 
             return resume;
         }
-
     }
 
     private void writeList(DataOutputStream dos, ListSection section) throws IOException {
@@ -142,6 +128,28 @@ public class DataStreamSerializer implements StreamStrategy {
                     dos.writeUTF("");
                 }
             }
+        }
+    }
+
+    private interface Writer<T>{
+        void writeElement (T section) throws IOException;
+    }
+
+    private <T > void writeWithException(DataOutputStream dos, Collection<T> section, Writer<T> writer) throws IOException{
+        dos.writeInt(section.size());
+        for(T c : section){
+            writer.writeElement(c);
+        }
+    }
+
+    private interface Reader{
+        void readElement () throws IOException;
+    }
+
+    private void readWithException(DataInputStream dis, Reader reader) throws IOException{
+        int size = dis.readInt();
+        for(int i=0; i<size; i++){
+            reader.readElement();
         }
     }
 }
