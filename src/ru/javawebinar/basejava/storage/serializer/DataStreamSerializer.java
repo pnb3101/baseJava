@@ -24,21 +24,24 @@ public class DataStreamSerializer implements StreamStrategy {
                 dos.writeUTF(entry.getValue());
             }
 
-            writeWithException(dos, resume.getSections().entrySet(), entry ->{
+            writer(dos, resume.getSections().entrySet(), entry ->{
                 SectionType sectionType = entry.getKey();
                 dos.writeUTF(sectionType.name());
                 AbstractSection section = entry.getValue();
                 switch (sectionType) {
                     case PERSONAL:
                     case OBJECTIVE:
+                        dos.writeInt(((StringSection)section).getInfo().length());
                         dos.writeUTF(((StringSection) section).getInfo());
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
+                        dos.writeInt(((ListSection)section).getInfo().size());
                         writeList(dos, (ListSection) section);
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
+                        dos.writeInt(((OrganizationSection)section).getOrganizatios().size());
                         writeOrganization(dos, (OrganizationSection) section);
                         break;
                 }
@@ -58,8 +61,8 @@ public class DataStreamSerializer implements StreamStrategy {
             }
 
             readWithException(dis, ()-> {
-                int size = dis.readInt();
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
+                int sizeSection = dis.readInt();
                 switch (sectionType) {
                     case PERSONAL:
                     case OBJECTIVE:
@@ -69,7 +72,7 @@ public class DataStreamSerializer implements StreamStrategy {
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
                             List<String> list = new ArrayList<>();
-                            for (int i = 0; i < size; i++) {
+                            for (int i = 0; i < sizeSection; i++) {
                                 list.add(dis.readUTF());
                             }
                             ListSection listSection = new ListSection(list);
@@ -78,7 +81,7 @@ public class DataStreamSerializer implements StreamStrategy {
                     case EXPERIENCE:
                     case EDUCATION:
                         List<Organization> listOrg = new ArrayList<>();
-                            for (int i = 0; i < size; i++) {
+                            for (int i = 0; i < sizeSection; i++) {
                                 String nameOrganization = dis.readUTF();
                                 String url = dis.readUTF();
                                 int positionsSize = dis.readInt();
@@ -132,13 +135,13 @@ public class DataStreamSerializer implements StreamStrategy {
     }
 
     private interface Writer<T>{
-        void writeElement (T section) throws IOException;
+        void write(T section) throws IOException;
     }
 
-    private <T > void writeWithException(DataOutputStream dos, Collection<T> section, Writer<T> writer) throws IOException{
-        dos.writeInt(section.size());
-        for(T c : section){
-            writer.writeElement(c);
+    private <T > void writer(DataOutputStream dos, Collection<T> collection, Writer<T> writer) throws IOException{
+        dos.writeInt(collection.size());
+        for(T item : collection){
+            writer.write(item);
         }
     }
 
