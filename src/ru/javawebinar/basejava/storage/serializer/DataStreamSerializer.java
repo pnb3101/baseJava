@@ -18,32 +18,42 @@ public class DataStreamSerializer implements StreamStrategy {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
             Map<ContactType, String> contacts = resume.getContacts();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
+            writer(dos, contacts.entrySet(), entry -> {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
-            }
+            });
 
-            writer(dos, resume.getSections().entrySet(), entry ->{
+            writer(dos, resume.getSections().entrySet(), entry -> {
                 SectionType sectionType = entry.getKey();
                 dos.writeUTF(sectionType.name());
                 AbstractSection section = entry.getValue();
                 switch (sectionType) {
                     case PERSONAL:
                     case OBJECTIVE:
-                        dos.writeInt(((StringSection)section).getInfo().length());
+                        dos.writeInt(((StringSection) section).getInfo().length());
                         dos.writeUTF(((StringSection) section).getInfo());
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        dos.writeInt(((ListSection)section).getInfo().size());
-                        writeList(dos, (ListSection) section);
+                        writer(dos, ((ListSection) section).getInfo(), dos::writeUTF);
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        dos.writeInt(((OrganizationSection)section).getOrganizatios().size());
-                        writeOrganization(dos, (OrganizationSection) section);
-                        break;
+                        writer(dos, ((OrganizationSection) section).getOrganizatios(), org -> {
+                            dos.writeUTF(org.getHomePage().getName());
+                            dos.writeUTF(org.getHomePage().getUrl());
+                            writer(dos, org.getPositions(), position -> {
+                                dos.writeUTF(position.getPosition());
+                                dos.writeUTF(position.getDateOfStart().toString());
+                                dos.writeUTF(position.getDateOfFinish().toString());
+                                if (position.getInfo() != null) {
+                                    dos.writeUTF(position.getInfo());
+                                } else {
+                                    dos.writeUTF("");
+                                }
+                            });
+                        });
+                    break;
                 }
             });
         }
@@ -60,7 +70,7 @@ public class DataStreamSerializer implements StreamStrategy {
                 resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             }
 
-            readWithException(dis, ()-> {
+            readWithException(dis, () -> {
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
                 int sizeSection = dis.readInt();
                 switch (sectionType) {
@@ -71,87 +81,58 @@ public class DataStreamSerializer implements StreamStrategy {
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                            List<String> list = new ArrayList<>();
-                            for (int i = 0; i < sizeSection; i++) {
-                                list.add(dis.readUTF());
-                            }
-                            ListSection listSection = new ListSection(list);
-                            resume.addSection(sectionType, listSection);
+                        List<String> list = new ArrayList<>();
+                        for (int i = 0; i < sizeSection; i++) {
+                            list.add(dis.readUTF());
+                        }
+                        ListSection listSection = new ListSection(list);
+                        resume.addSection(sectionType, listSection);
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
                         List<Organization> listOrg = new ArrayList<>();
-                            for (int i = 0; i < sizeSection; i++) {
-                                String nameOrganization = dis.readUTF();
-                                String url = dis.readUTF();
-                                int positionsSize = dis.readInt();
-                                List<Organization.Position> positions = new ArrayList<>();
-                                for (int j = 0; j < positionsSize; j++) {
-                                    String position = dis.readUTF();
-                                    YearMonth dateOfStart = YearMonth.parse(dis.readUTF());
-                                    YearMonth dateOfFinish = YearMonth.parse(dis.readUTF());
-                                    String info = dis.readUTF();
-                                    positions.add(new Organization.Position(position, dateOfStart, dateOfFinish, info));
-                                }
-                                listOrg.add(new Organization(new Link(nameOrganization, url), positions));
+                        for (int i = 0; i < sizeSection; i++) {
+                            String nameOrganization = dis.readUTF();
+                            String url = dis.readUTF();
+                            int positionsSize = dis.readInt();
+                            List<Organization.Position> positions = new ArrayList<>();
+                            for (int j = 0; j < positionsSize; j++) {
+                                String position = dis.readUTF();
+                                YearMonth dateOfStart = YearMonth.parse(dis.readUTF());
+                                YearMonth dateOfFinish = YearMonth.parse(dis.readUTF());
+                                String info = dis.readUTF();
+                                positions.add(new Organization.Position(position, dateOfStart, dateOfFinish, info));
                             }
+                            listOrg.add(new Organization(new Link(nameOrganization, url), positions));
+                        }
                         resume.addSection(sectionType, new OrganizationSection(listOrg));
                         break;
                     default:
                         throw new StorageException("Problems with read path by DataStreamSerializer", "");
                 }
             });
-
             return resume;
         }
     }
 
-    private void writeList(DataOutputStream dos, ListSection section) throws IOException {
-        List<String> info = section.getInfo();
-        for (String str : info) {
-            dos.writeUTF(str);
-        }
-    }
-
-    private void writeOrganization(DataOutputStream dos, OrganizationSection section) throws IOException {
-        List<Organization> organizations = section.getOrganizatios();
-        for (Organization org : organizations) {
-            dos.writeUTF(org.getHomePage().getName());
-            dos.writeUTF(org.getHomePage().getUrl());
-            int positions = org.getPositions().size();
-            dos.writeInt(positions);
-            for (int j = 0; j < positions; j++) {
-                Organization.Position position = org.getPositions().get(j);
-                dos.writeUTF(position.getPosition());
-                dos.writeUTF(position.getDateOfStart().toString());
-                dos.writeUTF(position.getDateOfFinish().toString());
-                if (position.getInfo() != null) {
-                    dos.writeUTF(position.getInfo());
-                } else {
-                    dos.writeUTF("");
-                }
-            }
-        }
-    }
-
-    private interface Writer<T>{
+    private interface Writer<T> {
         void write(T section) throws IOException;
     }
 
-    private <T > void writer(DataOutputStream dos, Collection<T> collection, Writer<T> writer) throws IOException{
+    private <T> void writer(DataOutputStream dos, Collection<T> collection, Writer<T> writer) throws IOException {
         dos.writeInt(collection.size());
-        for(T item : collection){
+        for (T item : collection) {
             writer.write(item);
         }
     }
 
-    private interface Reader{
-        void readElement () throws IOException;
+    private interface Reader {
+        void readElement() throws IOException;
     }
 
-    private void readWithException(DataInputStream dis, Reader reader) throws IOException{
+    private void readWithException(DataInputStream dis, Reader reader) throws IOException {
         int size = dis.readInt();
-        for(int i=0; i<size; i++){
+        for (int i = 0; i < size; i++) {
             reader.readElement();
         }
     }
