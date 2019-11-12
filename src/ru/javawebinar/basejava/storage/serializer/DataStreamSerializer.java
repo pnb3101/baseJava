@@ -30,7 +30,6 @@ public class DataStreamSerializer implements StreamStrategy {
                 switch (sectionType) {
                     case PERSONAL:
                     case OBJECTIVE:
-                        dos.writeInt(((StringSection) section).getInfo().length());
                         dos.writeUTF(((StringSection) section).getInfo());
                         break;
                     case ACHIEVEMENT:
@@ -41,7 +40,11 @@ public class DataStreamSerializer implements StreamStrategy {
                     case EDUCATION:
                         writer(dos, ((OrganizationSection) section).getOrganizatios(), org -> {
                             dos.writeUTF(org.getHomePage().getName());
-                            dos.writeUTF(org.getHomePage().getUrl());
+                            if (org.getHomePage().getUrl() != null) {
+                                dos.writeUTF(org.getHomePage().getUrl());
+                            } else {
+                                dos.writeUTF("");
+                            }
                             writer(dos, org.getPositions(), position -> {
                                 dos.writeUTF(position.getPosition());
                                 dos.writeUTF(position.getDateOfStart().toString());
@@ -53,7 +56,7 @@ public class DataStreamSerializer implements StreamStrategy {
                                 }
                             });
                         });
-                    break;
+                        break;
                 }
             });
         }
@@ -65,46 +68,26 @@ public class DataStreamSerializer implements StreamStrategy {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            int sizeContact = dis.readInt();
-            for (int i = 0; i < sizeContact; i++) {
-                resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
-            }
+            readWithException(dis, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
 
             readWithException(dis, () -> {
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
-                int sizeSection = dis.readInt();
                 switch (sectionType) {
                     case PERSONAL:
                     case OBJECTIVE:
-                        StringSection stringSection = new StringSection(dis.readUTF());
-                        resume.addSection(sectionType, stringSection);
+                        resume.addSection(sectionType, new StringSection(dis.readUTF()));
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        List<String> list = new ArrayList<>();
-                        for (int i = 0; i < sizeSection; i++) {
-                            list.add(dis.readUTF());
-                        }
-                        ListSection listSection = new ListSection(list);
-                        resume.addSection(sectionType, listSection);
+                        resume.addSection(sectionType, new ListSection(readList(dis, () -> dis.readUTF())));
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
                         List<Organization> listOrg = new ArrayList<>();
-                        for (int i = 0; i < sizeSection; i++) {
-                            String nameOrganization = dis.readUTF();
-                            String url = dis.readUTF();
-                            int positionsSize = dis.readInt();
-                            List<Organization.Position> positions = new ArrayList<>();
-                            for (int j = 0; j < positionsSize; j++) {
-                                String position = dis.readUTF();
-                                YearMonth dateOfStart = YearMonth.parse(dis.readUTF());
-                                YearMonth dateOfFinish = YearMonth.parse(dis.readUTF());
-                                String info = dis.readUTF();
-                                positions.add(new Organization.Position(position, dateOfStart, dateOfFinish, info));
-                            }
-                            listOrg.add(new Organization(new Link(nameOrganization, url), positions));
-                        }
+                        readWithException(dis, () -> listOrg.add(new Organization(new Link(dis.readUTF(), dis.readUTF()),
+                                readList(dis, () -> new Organization.Position(dis.readUTF(), YearMonth.parse(dis.readUTF()),
+                                        YearMonth.parse(dis.readUTF()), dis.readUTF()))
+                        )));
                         resume.addSection(sectionType, new OrganizationSection(listOrg));
                         break;
                     default:
@@ -126,15 +109,28 @@ public class DataStreamSerializer implements StreamStrategy {
         }
     }
 
+    private interface ReaderWithType<T> {
+        T readElement() throws IOException;
+    }
+
     private interface Reader {
-        void readElement() throws IOException;
+        void read() throws IOException;
     }
 
     private void readWithException(DataInputStream dis, Reader reader) throws IOException {
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
-            reader.readElement();
+            reader.read();
         }
+    }
+
+    private <T> List<T> readList(DataInputStream dis, ReaderWithType<T> reader) throws IOException {
+        List<T> list = new ArrayList<>();
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            list.add(reader.readElement());
+        }
+        return list;
     }
 }
 
