@@ -9,7 +9,7 @@ public class MainConcurrency {
 
     static String d1 = "dead";
     static String d2 = "lock";
-    static int[] arr = {1,2,2,3,4,5,5,5,9};
+    static int[] arr = {1, 2, 2, 3, 6, 4, 5, 5, 5, 9};
 
     public static void main(String[] args) throws InterruptedException {
         //deadlock
@@ -20,8 +20,8 @@ public class MainConcurrency {
         System.out.println(minValue(arr));
         List<Integer> list = new ArrayList<>();
         list.add(2);
-        list.add(8);
-        list.add(1);
+        list.add(3);
+        list.add(3);
         list.add(4);
         System.out.println(oddOrEven(list));
     }
@@ -47,25 +47,17 @@ public class MainConcurrency {
     Например {1,2,3,3,2,3} вернет 123, а {9,8} вернет 89
      */
 
-    public static int minValue(int[] values){
-      //  Stream<Integer> stream = (Stream<Integer>) Stream.of(values);
-        int num = 0;
-        int circle = 0;
-        int[] result = IntStream.of(values).distinct().sorted().toArray();
-        for(int i = result.length-1; i>=0; i--){
-                num = num + result[circle] * ((int) Math.pow(10, i));
-                circle++;
-        }
-        return num;
+    public static int minValue(int[] values) {
+        return IntStream.of(values).distinct().sorted().reduce(0, (a, b) -> 10 * a + b);
     }
+
     /*
     реализовать метод List<Integer> oddOrEven(List<Integer> integers) если сумма всех чисел нечетная - удалить все нечетные,
      если четная - удалить все четные. Сложность алгоритма должна быть O(N). Optional - решение в один стрим
      */
-    public static List<Integer> oddOrEven(List<Integer> integers){
-        return integers.stream().reduce(0, (a, b) -> a + b)%2 == 0 ?
-                integers.stream().filter(p->p%2!=0).collect(Collectors.toList()) : integers.stream().filter(p->p%2==0).collect(Collectors.toList());
-
+    public static List<Integer> oddOrEven(List<Integer> integers) {
+        int num = integers.stream().reduce(0, (a, b) -> a + b);
+        return integers.stream().filter(p -> p % 2 != num % 2).collect(Collectors.toList());
     }
 
 }
