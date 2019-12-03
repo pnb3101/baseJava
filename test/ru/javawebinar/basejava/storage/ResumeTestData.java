@@ -1,17 +1,19 @@
 package ru.javawebinar.basejava.storage;
 
-import ru.javawebinar.basejava.model.Resume;
+import ru.javawebinar.basejava.model.*;
+
+import java.time.YearMonth;
 
 public class ResumeTestData {
 
     static Resume createResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
 
-      /*  resume.addContact(ContactType.PHONE_NUMBER, "+7(921) 856-0482");
+        resume.addContact(ContactType.PHONE_NUMBER, "+7(921) 856-0482");
         resume.addContact(ContactType.EMAIL, "gkislin@yandex.ru");
         resume.addContact(ContactType.GITHUB_PROFILE, "Профиль LinkedIn");
         resume.addContact(ContactType.STACKOVERFLOW_PROFILE, "Профиль Stackoverflow");
-        resume.addContact(ContactType.HOME_PAGE, "Домашняя страница");id
+        resume.addContact(ContactType.HOME_PAGE, "Домашняя страница");
         resume.addSection(SectionType.OBJECTIVE, new StringSection("Позиция\n" +
                 "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
         resume.addSection(SectionType.PERSONAL, new StringSection("Личные качества\n" +
@@ -49,7 +51,7 @@ public class ResumeTestData {
                         new Organization("Заочная физико-техническая школа при МФТИ\n", "",
                                 new Organization.Position("аспирант", YearMonth.parse("1984-09"),
                                         YearMonth.parse("1987-06"), ""))));
-        */
+
         return resume;
     }
 }
