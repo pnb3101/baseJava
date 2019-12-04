@@ -81,7 +81,7 @@ public abstract class AbstractStorageTest {
     public void getAllSorted() {
         List<Resume> resumesAfterGet = storage.getAllSorted();
         assertEquals(3, resumesAfterGet.size());
-        assertEquals(Arrays.asList(RESUME_1, RESUME_2, RESUME_3), resumesAfterGet);
+        assertEquals(resumesAfterGet, Arrays.asList(RESUME_1, RESUME_2, RESUME_3));
     }
 
     @Test
