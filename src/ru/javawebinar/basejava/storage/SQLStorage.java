@@ -34,7 +34,7 @@ public class SQLStorage implements Storage {
             }
             deleteContacts(conn, r);
             deleteSections(conn, r);
-            addContactSection(r, conn);
+            addContacts(conn, r);
             addSections(conn, r);
             return null;
         });
@@ -53,7 +53,7 @@ public class SQLStorage implements Storage {
                         ps.setString(2, resume.getFullName());
                         ps.execute();
                     }
-                    addContactSection(resume, conn);
+                    addContacts(conn, resume);
                     addSections(conn, resume);
                     return null;
                 }
@@ -141,7 +141,7 @@ public class SQLStorage implements Storage {
         });
     }
 
-    private void addContactSection(Resume r, Connection conn) throws SQLException {
+    private void addContacts(Connection conn, Resume r) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement("INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)")) {
             for (Map.Entry<ContactType, String> e : r.getContacts().entrySet()) {
                 ps.setString(1, r.getUuid());

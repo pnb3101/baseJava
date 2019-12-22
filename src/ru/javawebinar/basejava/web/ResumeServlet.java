@@ -14,10 +14,12 @@ import java.io.Writer;
 
 public class ResumeServlet extends javax.servlet.http.HttpServlet {
     private Storage storage = Config.get().getStorage();
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
     }
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
     }
 
@@ -28,7 +30,7 @@ public class ResumeServlet extends javax.servlet.http.HttpServlet {
         Writer writer = response.getWriter();
         writer.write(
                 "<html>\n" +
-                    "<head>\n" +
+                        "<head>\n" +
                         "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" +
                         "<link rel=\"stylesheet\" href=\"css/style.css\">\n" +
                         "<title>Список всех резюме</title>\n" +
