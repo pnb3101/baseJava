@@ -1,4 +1,4 @@
-package web;
+package Web;
 
 import ru.javawebinar.basejava.Config;
 import ru.javawebinar.basejava.model.ContactType;
