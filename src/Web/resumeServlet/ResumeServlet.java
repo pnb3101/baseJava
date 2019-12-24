@@ -1,4 +1,4 @@
-package Web;
+package Web.resumeServlet;
 
 import ru.javawebinar.basejava.Config;
 import ru.javawebinar.basejava.model.ContactType;
