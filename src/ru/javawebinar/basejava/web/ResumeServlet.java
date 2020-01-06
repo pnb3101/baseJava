@@ -1,8 +1,6 @@
 package ru.javawebinar.basejava.web;
 
 import ru.javawebinar.basejava.Config;
-import ru.javawebinar.basejava.model.ContactType;
-import ru.javawebinar.basejava.model.Resume;
 import ru.javawebinar.basejava.storage.Storage;
 
 import javax.servlet.ServletConfig;
@@ -10,7 +8,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.Writer;
 
 public class ResumeServlet extends javax.servlet.http.HttpServlet {
     private Storage storage = Config.get().getStorage();
@@ -24,7 +21,8 @@ public class ResumeServlet extends javax.servlet.http.HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
+        response.getWriter().write("Hello, resumes!");
+        /*  request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
         Writer writer = response.getWriter();
@@ -53,5 +51,6 @@ public class ResumeServlet extends javax.servlet.http.HttpServlet {
                 "</section>\n" +
                 "</body>\n" +
                 "</html>\n");
+    */
     }
 }
