@@ -68,6 +68,10 @@ public class Resume implements Comparable<Resume>, Serializable {
         contacts.put(type, value);
     }
 
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
     public void addContact(ContactType typeContact, String contact) {
         contacts.put(typeContact, contact);
     }
@@ -106,5 +110,9 @@ public class Resume implements Comparable<Resume>, Serializable {
     public int compareTo(Resume o) {
         int n = fullName.compareTo(o.fullName);
         return n != 0 ? n : uuid.compareTo(o.uuid);
+    }
+
+    public AbstractSection getSection(SectionType type) {
+        return sections.get(type);
     }
 }

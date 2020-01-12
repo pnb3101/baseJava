@@ -16,9 +16,7 @@ import java.util.Objects;
 public class Organization implements Serializable {
     private Link homePage;
     private List<Position> positions = new ArrayList<>();
-
-    public Organization() {
-    }
+    public static final Organization EMPTY = new Organization("", "", Position.EMPTY);
 
     public Organization(String name, String url, Position... positions) {
         this(new Link(name, url), Arrays.asList(positions));
@@ -67,6 +65,7 @@ public class Organization implements Serializable {
         @XmlJavaTypeAdapter(YearMonthAdapter.class)
         private YearMonth dateOfFinish;
         private String info;
+        public static final Position EMPTY = new Position();
 
         public Position() {
         }
