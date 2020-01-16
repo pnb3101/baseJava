@@ -17,6 +17,15 @@ import java.util.Map;
 
 public class SQLStorage implements Storage {
     public final SqlHelper sqlHelper;
+    Class c;
+
+    {
+        try {
+            c = Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     public SQLStorage(String dbUrl, String dbUser, String dbPassword) {
         sqlHelper = new SqlHelper(() -> DriverManager.getConnection(dbUrl, dbUser, dbPassword));
