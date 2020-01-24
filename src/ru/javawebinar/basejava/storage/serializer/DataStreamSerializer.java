@@ -38,7 +38,7 @@ public class DataStreamSerializer implements StreamStrategy {
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        writer(dos, ((OrganizationSection) section).getOrganizatios(), org -> {
+                        writer(dos, ((OrganizationSection) section).getOrganizations(), org -> {
                             dos.writeUTF(org.getHomePage().getName());
                             if (org.getHomePage().getUrl() != null) {
                                 dos.writeUTF(org.getHomePage().getUrl());
