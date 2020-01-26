@@ -24,10 +24,10 @@
         </c:forEach>
     <p>
     <hr>
-    <table cellpadding="2">
+    <table cellpadding="4">
         <c:forEach var="sectionEntry" items="${resume.sections}">
             <jsp:useBean id="sectionEntry"
-                         type="java.util.Map.Entry<ru.javawebinar.basejava.model.SectionType, ru.javawebinar.basejava.model.Section>"/>
+                         type="java.util.Map.Entry<ru.javawebinar.basejava.model.SectionType, ru.javawebinar.basejava.model.AbstractSection>"/>
             <c:set var="type" value="${sectionEntry.key}"/>
             <c:set var="section" value="${sectionEntry.value}"/>
             <jsp:useBean id="section" type="ru.javawebinar.basejava.model.AbstractSection"/>
@@ -93,5 +93,4 @@
 </section>
 <jsp:include page="fragments/footer.jsp"/>
 </body>
-</html>
 </html>

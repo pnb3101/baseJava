@@ -8,7 +8,7 @@ public enum ContactType {
             return getTitle() + ": " + toLink("skype:" + value, value);
         }
     },
-    EMAIL("Элуктронная почта") {
+    EMAIL("Email") {
         @Override
         public String toHtml0(String value) {
             return getTitle() + ": " + toLink("mailto:" + value, value);
