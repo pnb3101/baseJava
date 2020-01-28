@@ -39,7 +39,7 @@ public class ResumeServlet extends HttpServlet {
         for (SectionType type : SectionType.values()) {
             String value = request.getParameter(type.name());
             String[] values = request.getParameterValues(type.name());
-            if (value == null && values.length < 2) {
+            if (value == null && value.trim().length()==0 && values.length < 2) {
                 r.getSections().remove(type);
             } else {
                 switch (type) {
@@ -57,7 +57,7 @@ public class ResumeServlet extends HttpServlet {
                         String[] urls = request.getParameterValues(type.name() + "url");
                         for (int i = 0; i < values.length; i++) {
                             String name = values[i];
-                            if (name != null) {
+                            if (name != null && name.trim().length()!=0) {
                                 List<Organization.Position> positions = new ArrayList<>();
                                 String pfx = type.name() + i;
                                 String[] startDate = request.getParameterValues(pfx + "startDate");

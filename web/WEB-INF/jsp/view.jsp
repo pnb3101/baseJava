@@ -78,9 +78,8 @@
                         <c:forEach var="position" items="${org.positions}">
                             <jsp:useBean id="position" type="ru.javawebinar.basejava.model.Organization.Position"/>
                             <tr>
-                                <td width="15%" style="vertical-align: top"><%=DateUtil.formatDates(position)%>
-                                </td>
-                                <td><b>${position.title}</b><br>${position.description}</td>
+                                <td width="15%" style="vertical-align: top"><%=DateUtil.formatDates(position)%> </td>
+                                <td><b>${position.position}</b><br>${position.info}</td>
                             </tr>
                         </c:forEach>
                     </c:forEach>
