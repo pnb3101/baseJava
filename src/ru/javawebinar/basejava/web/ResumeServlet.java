@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage = Config.get().getStorage();
@@ -26,7 +27,14 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        Resume r = storage.get(uuid);
+        Resume r;
+        boolean isNew = false;
+        if ("".equals(uuid)) {
+            r = new Resume(UUID.randomUUID().toString(), "");
+            isNew = true;
+        } else {
+            r = storage.get(uuid);
+        }
         r.setFullName(fullName);
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
@@ -39,7 +47,7 @@ public class ResumeServlet extends HttpServlet {
         for (SectionType type : SectionType.values()) {
             String value = request.getParameter(type.name());
             String[] values = request.getParameterValues(type.name());
-            if (value == null && value.trim().length()==0 && values.length < 2) {
+            if (value == null && value.trim().length() == 0 && values.length < 2) {
                 r.getSections().remove(type);
             } else {
                 switch (type) {
@@ -57,13 +65,13 @@ public class ResumeServlet extends HttpServlet {
                         String[] urls = request.getParameterValues(type.name() + "url");
                         for (int i = 0; i < values.length; i++) {
                             String name = values[i];
-                            if (name != null && name.trim().length()!=0) {
+                            if (name != null && name.trim().length() != 0) {
                                 List<Organization.Position> positions = new ArrayList<>();
                                 String pfx = type.name() + i;
-                                String[] startDate = request.getParameterValues(pfx + "startDate");
-                                String[] endDate = request.getParameterValues(pfx + "endDate");
-                                String[] position = request.getParameterValues(pfx + "title");
-                                String[] info = request.getParameterValues(pfx + "description");
+                                String[] startDate = request.getParameterValues(pfx + "dateOfStart");
+                                String[] endDate = request.getParameterValues(pfx + "dateOfFinish");
+                                String[] position = request.getParameterValues(pfx + "position");
+                                String[] info = request.getParameterValues(pfx + "info");
                                 for (int j = 0; j < position.length; j++) {
                                     if (position[j] != null) {
                                         positions.add(new Organization.Position(position[j], DateUtil.parse(startDate[j]),
@@ -78,7 +86,11 @@ public class ResumeServlet extends HttpServlet {
                 }
             }
         }
-        storage.update(r);
+        if (isNew) {
+            storage.save(r);
+        } else {
+            storage.update(r);
+        }
         response.sendRedirect("resume");
     }
 
@@ -96,23 +108,46 @@ public class ResumeServlet extends HttpServlet {
                 storage.delete(uuid);
                 response.sendRedirect("resume");
                 return;
+            case "add":
+                r = Resume.EMPTY;
+                break;
             case "view":
             case "edit":
                 r = storage.get(uuid);
-                for (SectionType type : new SectionType[]{SectionType.EXPERIENCE, SectionType.EDUCATION}) {
-                    OrganizationSection section = (OrganizationSection) r.getSection(type);
-                    List<Organization> organizations = new ArrayList<>();
-                    organizations.add(Organization.EMPTY);
-                    if (section != null) {
-                        for (Organization org : section.getOrganizations()) {
-                            List<Organization.Position> positions = new ArrayList<>();
-                            positions.add(Organization.Position.EMPTY);
-                            positions.addAll(org.getPositions());
-                            organizations.add(new Organization(org.getHomePage(), positions));
-                        }
+                for (SectionType type : SectionType.values()) {
+                    AbstractSection section = r.getSection(type);
+                    switch (type) {
+                        case OBJECTIVE:
+                        case PERSONAL:
+                            if (section == null) {
+                                section = StringSection.EMPTY;
+                            }
+                            break;
+                        case ACHIEVEMENT:
+                        case QUALIFICATIONS:
+                            if (section == null) {
+                                section = ListSection.EMPTY;
+                            }
+                            break;
+                        case EXPERIENCE:
+                        case EDUCATION:
+                            OrganizationSection organizationSection = (OrganizationSection) r.getSection(type);
+                            List<Organization> organizations = new ArrayList<>();
+                            organizations.add(Organization.EMPTY);
+                            if (organizationSection != null) {
+                                for (Organization org : organizationSection.getOrganizations()) {
+                                    List<Organization.Position> positions = new ArrayList<>();
+                                    positions.add(Organization.Position.EMPTY);
+                                    positions.addAll(org.getPositions());
+                                    organizations.add(new Organization(org.getHomePage(), positions));
+                                }
+                            }
+                            section = new OrganizationSection(organizations);
+                            break;
                     }
-                    r.setSection(type, new OrganizationSection(organizations));
+                    r.setSection(type, section);
                 }
+
                 break;
             default:
                 throw new IllegalArgumentException("Action " + action + " is illegal");

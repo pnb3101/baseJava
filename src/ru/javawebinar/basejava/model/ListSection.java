@@ -8,6 +8,7 @@ import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ListSection extends AbstractSection {
+    public static final ListSection EMPTY = new ListSection("");
     private List<String> info;
 
     public ListSection() {
