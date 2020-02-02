@@ -35,8 +35,6 @@ public class StringSection extends AbstractSection {
 
     @Override
     public String toString() {
-        return "StringsData{" +
-                "info='" + info + '\'' +
-                '}';
+        return info;
     }
 }

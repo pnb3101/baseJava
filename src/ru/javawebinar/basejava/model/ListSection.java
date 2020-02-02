@@ -29,9 +29,7 @@ public class ListSection extends AbstractSection {
 
     @Override
     public String toString() {
-        return "ListData{" +
-                "info=" + info +
-                '}';
+        return info.toString();
     }
 
     @Override
