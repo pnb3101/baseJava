@@ -4,6 +4,7 @@ import ru.javawebinar.basejava.Config;
 import ru.javawebinar.basejava.model.*;
 import ru.javawebinar.basejava.storage.Storage;
 import ru.javawebinar.basejava.util.DateUtil;
+import ru.javawebinar.basejava.util.HtmlUtil;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -13,41 +14,40 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class ResumeServlet extends HttpServlet {
-    private Storage storage = Config.get().getStorage();
+    private Storage storage; //= Config.get().getStorage();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        storage = Config.get().getStorage();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
+        final boolean isCreate = (uuid == null || uuid.length() == 0);
         Resume r;
-        boolean isNew = false;
-        if ("".equals(uuid)) {
-            r = new Resume(UUID.randomUUID().toString(), "");
-            isNew = true;
+        if (isCreate) {
+            r = new Resume(fullName);
         } else {
             r = storage.get(uuid);
+            r.setFullName(fullName);
         }
-        r.setFullName(fullName);
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
-            if (value != null && value.trim().length() != 0) {
-                r.addContact(type, value);
-            } else {
+            if (HtmlUtil.isEmpty(value)) {
                 r.getContacts().remove(type);
+            } else {
+                r.setContact(type, value);
             }
         }
         for (SectionType type : SectionType.values()) {
             String value = request.getParameter(type.name());
             String[] values = request.getParameterValues(type.name());
-            if (value == null || value.trim().length() == 0 && values.length < 2) {
+            if (HtmlUtil.isEmpty(value) && values.length < 2) {
                 r.getSections().remove(type);
             } else {
                 switch (type) {
@@ -65,17 +65,16 @@ public class ResumeServlet extends HttpServlet {
                         String[] urls = request.getParameterValues(type.name() + "url");
                         for (int i = 0; i < values.length; i++) {
                             String name = values[i];
-                            if (name != null && name.trim().length() != 0) {
+                            if (!HtmlUtil.isEmpty(name)) {
                                 List<Organization.Position> positions = new ArrayList<>();
                                 String pfx = type.name() + i;
-                                String[] startDate = request.getParameterValues(pfx + "dateOfStart");
-                                String[] endDate = request.getParameterValues(pfx + "dateOfFinish");
-                                String[] position = request.getParameterValues(pfx + "position");
-                                String[] info = request.getParameterValues(pfx + "info");
-                                for (int j = 0; j < position.length; j++) {
-                                    if (position[j] != null) {
-                                        positions.add(new Organization.Position(position[j], DateUtil.parse(startDate[j]),
-                                                DateUtil.parse(endDate[j]), info[j]));
+                                String[] startDates = request.getParameterValues(pfx + "startDate");
+                                String[] endDates = request.getParameterValues(pfx + "endDate");
+                                String[] titles = request.getParameterValues(pfx + "title");
+                                String[] descriptions = request.getParameterValues(pfx + "description");
+                                for (int j = 0; j < titles.length; j++) {
+                                    if (!HtmlUtil.isEmpty(titles[j])) {
+                                        positions.add(new Organization.Position(titles[j], DateUtil.parse(startDates[j]), DateUtil.parse(endDates[j]), descriptions[j]));
                                     }
                                 }
                                 orgs.add(new Organization(new Link(name, urls[i]), positions));
@@ -86,7 +85,7 @@ public class ResumeServlet extends HttpServlet {
                 }
             }
         }
-        if (isNew) {
+        if (isCreate) {
             storage.save(r);
         } else {
             storage.update(r);
@@ -94,7 +93,7 @@ public class ResumeServlet extends HttpServlet {
         response.sendRedirect("resume");
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         String uuid = request.getParameter("uuid");
         String action = request.getParameter("action");
         if (action == null) {
@@ -108,10 +107,12 @@ public class ResumeServlet extends HttpServlet {
                 storage.delete(uuid);
                 response.sendRedirect("resume");
                 return;
+            case "view":
+                r = storage.get(uuid);
+                break;
             case "add":
                 r = Resume.EMPTY;
                 break;
-            case "view":
             case "edit":
                 r = storage.get(uuid);
                 for (SectionType type : SectionType.values()) {
@@ -131,23 +132,22 @@ public class ResumeServlet extends HttpServlet {
                             break;
                         case EXPERIENCE:
                         case EDUCATION:
-                            OrganizationSection organizationSection = (OrganizationSection) r.getSection(type);
-                            List<Organization> organizations = new ArrayList<>();
-                            organizations.add(Organization.EMPTY);
-                            if (organizationSection != null) {
-                                for (Organization org : organizationSection.getOrganizations()) {
-                                    List<Organization.Position> positions = new ArrayList<>();
-                                    positions.add(Organization.Position.EMPTY);
-                                    positions.addAll(org.getPositions());
-                                    organizations.add(new Organization(org.getHomePage(), positions));
+                            OrganizationSection orgSection = (OrganizationSection) section;
+                            List<Organization> emptyFirstOrganizations = new ArrayList<>();
+                            emptyFirstOrganizations.add(Organization.EMPTY);
+                            if (orgSection != null) {
+                                for (Organization org : orgSection.getOrganizations()) {
+                                    List<Organization.Position> emptyFirstPositions = new ArrayList<>();
+                                    emptyFirstPositions.add(Organization.Position.EMPTY);
+                                    emptyFirstPositions.addAll(org.getPositions());
+                                    emptyFirstOrganizations.add(new Organization(org.getHomePage(), emptyFirstPositions));
                                 }
                             }
-                            section = new OrganizationSection(organizations);
+                            section = new OrganizationSection(emptyFirstOrganizations);
                             break;
                     }
                     r.setSection(type, section);
                 }
-
                 break;
             default:
                 throw new IllegalArgumentException("Action " + action + " is illegal");

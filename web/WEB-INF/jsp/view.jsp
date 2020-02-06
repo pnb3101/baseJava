@@ -15,7 +15,7 @@
 <body>
 <jsp:include page="fragments/header.jsp"/>
 <section>
-    <h2>${resume.fullName}&nbsp;<a href="resume?uuid=${resume.uuid}&action=edit">Edit</a></h2>
+    <h1>${resume.fullName}&nbsp;<a href="resume?uuid=${resume.uuid}&action=edit">Edit</a></h1>
     <p>
         <c:forEach var="contactEntry" items="${resume.contacts}">
             <jsp:useBean id="contactEntry"
@@ -24,7 +24,7 @@
         </c:forEach>
     <p>
     <hr>
-    <table cellpadding="4">
+    <table cellpadding="2">
         <c:forEach var="sectionEntry" items="${resume.sections}">
             <jsp:useBean id="sectionEntry"
                          type="java.util.Map.Entry<ru.javawebinar.basejava.model.SectionType, ru.javawebinar.basejava.model.AbstractSection>"/>
@@ -38,7 +38,8 @@
                 <c:when test="${type=='OBJECTIVE'}">
                     <tr>
                         <td colspan="2">
-                            <h3><%=((StringSection) section).getInfo()%></h3>
+                            <h3><%=((StringSection) section).getInfo()%>
+                            </h3>
                         </td>
                     </tr>
                 </c:when>
@@ -77,7 +78,8 @@
                         <c:forEach var="position" items="${org.positions}">
                             <jsp:useBean id="position" type="ru.javawebinar.basejava.model.Organization.Position"/>
                             <tr>
-                                <td width="15%" style="vertical-align: top"><%=DateUtil.formatDates(position)%> </td>
+                                <td width="15%" style="vertical-align: top"><%=DateUtil.formatDates(position)%>
+                                </td>
                                 <td><b>${position.position}</b><br>${position.info}</td>
                             </tr>
                         </c:forEach>
